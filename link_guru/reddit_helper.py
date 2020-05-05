@@ -29,14 +29,12 @@ def get_submissions(reddit, categories=None, limit=20, subreddit="nepal"):
     subreddit = reddit.subreddit(subreddit)
     submissions = []
     categories = ["hot"] if not categories else categories
-
     category_map = {
         "hot": subreddit.hot(limit=limit),
         "new": subreddit.new(limit=limit),
         "top": subreddit.top("day", limit=limit),
         "controversial": subreddit.controversial("day", limit=limit),
     }
-
     categories_gen = [category_map[i] for i in categories if i in category_map.keys()]
     scanlist = itertools.chain(*categories_gen)
 
@@ -49,18 +47,14 @@ def get_submission_comments(submission):
     return all_comments
 
 
-def reply(reply_message, cmt=None, post=None):
-    submission = cmt.submission if not post else post
-    # Since both comment and element will have property author and reply
-    # We will refer them both as element
-    element = cmt if cmt else submission
-    print(f"replying to {element.id} under submission {submission.id}")
-
-    if is_open(element):
+def reply(reply_message, element):
+    post = element.submission if hasattr(element, 'submission') else element
+    print(f"replying to {element.id} under submission {post.id}")
+    if is_open(post=post):
         print("Submission open commenting...")
         return __try_commenting(element, reply_message)
     else:
-        print(f"ERROR: Submission {submission.id} closed: Archived or Locked. Cannot comment ")
+        print(f"ERROR: Submission {post.id} closed: Archived or Locked.")
 
 
 def is_open(post=None, comment=None):

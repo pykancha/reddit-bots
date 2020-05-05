@@ -3,6 +3,8 @@ import re
 import time
 from pathlib import Path
 
+from bs4 import BeautifulSoup as BS
+
 from news import get_full_news, get_news, get_summary
 from custom_scrapers import custom_scrapers_map
 from reddit_helper import (get_replied_ids, get_submissions, is_open, login,
@@ -11,12 +13,17 @@ from templates.footer import footer_string
 from templates.news import NewsTemplate
 
 
+SITES_FILE_PATH = Path("supported_sites.json")
+REPLIED_FILE_PATH = Path("test_replied_to.json")
+
+
 def main():
     USERNAME = "link_guru"
     reddit = login(USERNAME)
-    REPLIED_FILE_PATH = Path("replied_to.json")
 
     replied_ids = get_replied_ids(REPLIED_FILE_PATH)
+    manage_mentions(reddit, replied_ids)
+
     submissions = get_submissions_with_supported_link(reddit)
     unreplied_submissions = [sub for sub in submissions if sub.id not in replied_ids]
     print(f"Got {len(unreplied_submissions)} unreplied submissions")
@@ -25,18 +32,21 @@ def main():
     }
     print(f"Got {len(open_unreplied_submissions)} valid submissions")
     for submission in open_unreplied_submissions:
-        news = get_news_with_translation(submission)
+        news = get_news_with_translation(submission.url, submission.domain)
         if not news:
             continue
+        reply_and_update_ids(news, submission)
 
-        main_reply, child_reply = gen_reply_message(news)
-        replied_cmt = reply(main_reply, post=submission)
 
-        if replied_cmt:
-            update_replied_ids(REPLIED_FILE_PATH, submission.id)
-        if child_reply:
-            time.sleep(5)
-            reply(child_reply, cmt=replied_cmt)
+def reply_and_update_ids(news, element):
+    main_reply, child_reply = gen_reply_message(news)
+
+    replied_cmt = reply(main_reply, element)
+    if replied_cmt:
+        update_replied_ids(REPLIED_FILE_PATH, element.id)
+    if child_reply:
+        time.sleep(5)
+        reply(child_reply, replied_cmt)
 
 
 def get_submissions_with_supported_link(reddit):
@@ -45,32 +55,19 @@ def get_submissions_with_supported_link(reddit):
     Get the domain of that submission and matches against regular expressions
     of sites we have in supported_sites.json file
     """
-
-    SITES_FILE_PATH = Path("supported_sites.json")
-
     categories = ["hot", "new"]
     submissions = get_submissions(reddit, categories=categories, subreddit="nepal")
-
-    with SITES_FILE_PATH.open("r") as rf:
-        sites = json.load(rf)
-
-    # Make site name regex safe
-    sites = [site.replace(".", "\.") for site in sites]
-    make_pattern = lambda site: r"(www\.)?{site}".format(site=site)
-    patterns = [make_pattern(site) for site in sites]
-    print(f"Generated patterns \n{patterns}")
-
     matched_submissions = [
-        sub for sub in submissions if matched_link(sub.domain, patterns)
+        sub for sub in submissions if matched_link(sub.domain)
     ]
     print(f"{[(sub.id, sub.domain, sub.author) for sub in matched_submissions]}")
     return matched_submissions
 
 
-def get_news_with_translation(submission):
-    url = submission.url
+def get_news_with_translation(url, domain):
+    url = url
     print(f"Got url {url}")
-    scraper = map_to_scraper(submission.domain)
+    scraper = map_to_scraper(domain)
     data = scraper(url)
     if not data:
         return None
@@ -101,18 +98,27 @@ def get_news_with_translation(submission):
     return news
 
 
-def matched_link(url, patterns):
-    matched = False
+def matched_link(url, make_pattern=None):
+    with SITES_FILE_PATH.open("r") as rf:
+        sites = json.load(rf)
+    # Make site name regex safe
+    sites = [site.replace(".", "\.") for site in sites]
+    if not make_pattern:
+        make_pattern = lambda site: r"(www\.)?{site}".format(site=site)
+    patterns = [make_pattern(site) for site in sites]
+    print(f"Generated patterns \n{patterns}")
     print(f"Matching regex {url}")
 
+    match = None
     for pattern in patterns:
+        if 'nagarik' in pattern:
+            print(pattern, url)
         match = re.search(pattern, url)
-        if match and match.group() == url:
-            matched = True
+        if match and match.group():
             print(f"Matched {url}")
-            break
+            break;
 
-    return matched
+    return match
 
 
 def gen_reply_message(news):
@@ -133,6 +139,57 @@ def map_to_scraper(domain):
         return custom_scrapers_map[domain]
     else:
         return get_news
+
+
+def scan_for_matched_links(element):
+    html = element.body_html
+    links_with_domain = extract_links_from_html(html)
+    if links_with_domain:
+        return links_with_domain
+
+    parent = element.parent()
+    if hasattr(parent, 'title'):
+        new_html = parent.selftext_html + f' <a href="{parent.url}"></a>'
+        print(f"submission detected \n{new_html}")
+    else:
+        new_html = parent.body_html
+    links_with_domain = extract_links_from_html(new_html)
+
+    return links_with_domain
+
+
+def manage_mentions(reddit, replied_ids):
+    mentions = reddit.inbox.mentions()
+    unreplied_mentions = (
+        mention for mention in mentions if mention.id not in replied_ids
+    )
+    for index, element in enumerate(unreplied_mentions):
+        links_with_domain = scan_for_matched_links(element)
+        print(f"scanning {index} mention. Got links \n{links_with_domain}")
+        for link_domain in links_with_domain:
+            link, domain = link_domain
+            news = get_news_with_translation(link, domain)
+            if not news:
+                continue
+            reply_and_update_ids(news, element)
+
+
+def extract_links_from_html(html):
+    soup = BS(html, features='lxml')
+    links = [a['href'] for a in soup.find_all('a')]
+    print(f"Got links from html \n{links}")
+
+    pattern_str = r"(http|https)?(://)?(www\.)?({site})/(.)*\b"
+    pattern_maker = lambda site: pattern_str.format(site=site)
+    links_with_domain = []
+
+    for link in links:
+        match = matched_link(link, make_pattern=pattern_maker)
+        if match and match.group(4):
+            links_with_domain.append( (link, match.group(4)) )
+
+    print(f"Extracted from html \n{links_with_domain}")
+    return links_with_domain
 
 
 if __name__ == "__main__":
