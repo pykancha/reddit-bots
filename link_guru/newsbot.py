@@ -176,7 +176,11 @@ def manage_mentions(reddit, replied_ids):
             news = get_news_with_translation(link, domain)
             if not news:
                 continue
+<<<<<<< HEAD
             reply_and_update_ids(reddit, news, element)
+=======
+            reply_and_update_ids(news, element)
+>>>>>>> c48cc9c... Adds mentioning capability
 
 
 def extract_links_from_html(html):
