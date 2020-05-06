@@ -36,7 +36,6 @@ def get_submissions(reddit, categories=None, limit=20, subreddit="nepal"):
         "top": subreddit.top("day", limit=limit),
         "controversial": subreddit.controversial("day", limit=limit),
     }
-
     categories_gen = [category_map[i] for i in categories if i in category_map.keys()]
     scanlist = itertools.chain(*categories_gen)
 
