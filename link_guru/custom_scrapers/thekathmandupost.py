@@ -93,8 +93,3 @@ def __sanitize_text(text):
     # drop blank lines
     text = "\n".join(chunk for chunk in chunks if chunk)
     return text
-
-
-get_news(
-    "https://kathmandupost.com/national/2020/05/07/for-nepali-women-rampant-objectification-and-sexualisation-on-the-internet"
-)
