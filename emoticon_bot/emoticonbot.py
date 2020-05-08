@@ -15,7 +15,6 @@ from reddit_helper import (
     update_replied_ids,
     get_submission_comments,
 )
-from templates.footer import footer_string
 
 
 def main():
@@ -37,13 +36,7 @@ def main():
             continue
         
         reply_message = gen_reply_message(comment, emotion)
-
-        # TESTING ONLY IS PURPOSES. SOONER IF POSSIBLE REMOVE
-        test_comment = reddit.comment('fpuxbz9')
-        replied_cmt = reply(reply_message, cmt=test_comment)
-        # replied_cmt = reply(reply_message, cmt=comment)
-        # ----------------------------
-
+        replied_cmt = reply(reply_message, cmt=comment)
         if replied_cmt:
             update_replied_ids(REPLIED_FILE_PATH, comment.id)
 
@@ -54,13 +47,7 @@ def main():
             continue
 
         reply_message = gen_reply_message(submission, emotion)
-
-        # TESTING ONLY IS PURPOSES. SOONER IF POSSIBLE REMOVE
-        test_submission = reddit.submission(id="gfpcqg")
-        replied_cmt = reply(reply_message, post=test_submission)
-        # replied_cmt = reply(reply_message, post=submission)
-        # ----------------------------
-
+        replied_cmt = reply(reply_message, post=submission)
         if replied_cmt:
             update_replied_ids(REPLIED_FILE_PATH, submission.id)
 
@@ -108,17 +95,8 @@ def gen_reply_message(element, emotion):
     random.shuffle(replies)
     core_reply = random.choice(replies)
 
-    # TESTING PURPOSES ONLY
-    text = element.body if hasattr(element, 'body') else (element.title +
-                                                          element.selftext)
-    author = f"{element.author}" if element.author else ""
-    #author = f"u/{element.author}" if element.author else ""
-    full_message = f">{author} \n\n > {text} \n\n"
-    full_message += core_reply.format(author=author)
-    #full_message = core_reply.format(author=author)
-    # --------------------------------------
-
-    full_message += f"\n\n {footer_string}"
+    author = f"u/{element.author}" if element.author else ""
+    full_message = core_reply.format(author=author)
     print(f"Generated reply message {full_message}")
     return full_message
 
