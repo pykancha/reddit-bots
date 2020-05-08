@@ -132,6 +132,5 @@ dmypy.json
 *.swo
 *.swp
 .#*
-
 *poetry.lock
 *pyproject.toml
