@@ -14,7 +14,7 @@ from templates.news import NewsTemplate
 def main():
     USERNAME = "link_guru"
     reddit = login(USERNAME)
-    REPLIED_FILE_PATH = Path("replied_to.json")
+    REPLIED_FILE_PATH = Path("test_replied_to.json")
 
     replied_ids = get_replied_ids(REPLIED_FILE_PATH)
     submissions = get_submissions_with_supported_link(reddit)
