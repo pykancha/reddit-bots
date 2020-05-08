@@ -1,156 +1,96 @@
 import datetime
-import itertools
-import json
-import os
 import random
+import json
 import time
-
-import praw
-from praw.exceptions import RedditAPIException
+from pathlib import Path
 
 from emoticons import emoticons_data
 from replies import replies_data
-
-# Reddit time limit for simultaneous comment is 7 minutes
-TIME_LIMIT = (7 * 60) + 3
-
-
-def login():
-    print("Logging in...")
-    reddit = praw.Reddit(
-        client_id=os.getenv("EMUJIBOT_ID"),
-        client_secret=os.getenv("EMUJIBOT_SECRET"),
-        user_agent=os.getenv("EMUJIBOT_USERAGENT"),
-        username="emuji-bot",
-        password=os.getenv("EMUJIBOT_PASS"),
-    )
-    print(f"Logged in. read_only: {reddit.read_only}")
-    print(reddit.auth.limits)
-    return reddit
+from reddit_helper import (
+    get_replied_ids,
+    get_submissions,
+    is_open,
+    login,
+    reply,
+    update_replied_ids,
+    get_submission_comments,
+)
+from templates.footer import footer_string
 
 
-def get_replied_data():
-    with open("replied_to.json", "r") as rf:
-        data = json.load(rf)
-    return data
+def main():
+    USERNAME = "emuji-bot"
+    reddit = login(USERNAME)
+    REPLIED_FILE_PATH = Path("replied_to.json")
 
+    replied_ids = get_replied_ids(REPLIED_FILE_PATH)
+    submissions, comments = get_open_submissions_and_comments(reddit)
+    unreplied_submissions = [sub for sub in submissions if sub.id not in replied_ids]
+    unreplied_comments = [cmt for cmt in comments if cmt.id not in replied_ids]
+    print(f"Got {len(unreplied_submissions)} valid submissions"
+          f"Got {len(unreplied_comments)} valid comments")
 
-def update_replied_data(element_id):
-    data = get_replied_data()
-    ids = data["EMUJI_BOT"]
-    ids.append(element_id)
-    data["EMUJI_BOT"] = ids
-    with open("replied_to.json", "w") as wf:
-        json.dump(data, wf)
+    for comment in unreplied_comments:
+        text = comment.body
+        emotion = detect_emotion(text)
+        if not emotion:
+            continue
+        
+        reply_message = gen_reply_message(comment, emotion)
 
+        # TESTING ONLY IS PURPOSES. SOONER IF POSSIBLE REMOVE
+        test_comment = reddit.comment('fpuxbz9')
+        replied_cmt = reply(reply_message, cmt=test_comment)
+        # replied_cmt = reply(reply_message, cmt=comment)
+        # ----------------------------
 
-def get_comments_and_submissions(reddit, subreddit="nepal"):
-    rnepal = reddit.subreddit(subreddit)
-    comments = []
-    submissions = []
+        if replied_cmt:
+            update_replied_ids(REPLIED_FILE_PATH, comment.id)
 
-    hot = rnepal.hot(limit=20)
-    controversial = rnepal.controversial(time_filter="day", limit=20)
-    scan_list = itertools.chain(hot, controversial)
-
-    for index, submission in enumerate(scan_list):
-        print(f"Scanning {index} submission {submission.title} |{submission.id}|")
-        surface_comments = submission.comments.list()
-        single_comments = [
-            cmt
-            for cmt in surface_comments
-            if type(cmt) is praw.models.reddit.comment.Comment
-        ]
-        parent_comments = [
-            get_children_comments(cmt)
-            for cmt in surface_comments
-            if type(cmt) is praw.models.reddit.more.MoreComments
-        ]
-        for comment_group in parent_comments:
-            single_comments += comment_group
-
-        comments += single_comments
-        submissions.append(submission)
-
-        print(f"Scanned {submission.id}. Got {len(single_comments)} comments.")
-
-    return comments, submissions
-
-
-def inspect_submissions_and_reply(submissions):
-    for submission in submissions:
-        print(f"Inspecting submission {submission.id} for emoticons")
+    for submission in unreplied_submissions:
         text = submission.title + submission.selftext
-        detect_and_reply(text, post=submission)
+        emotion = detect_emotion(text)
+        if not emotion:
+            continue
+
+        reply_message = gen_reply_message(submission, emotion)
+
+        # TESTING ONLY IS PURPOSES. SOONER IF POSSIBLE REMOVE
+        test_submission = reddit.submission(id="gfpcqg")
+        replied_cmt = reply(reply_message, post=test_submission)
+        # replied_cmt = reply(reply_message, post=submission)
+        # ----------------------------
+
+        if replied_cmt:
+            update_replied_ids(REPLIED_FILE_PATH, submission.id)
 
 
-def inspect_comments_and_reply(comments):
-    for cmt in comments:
-        print(f"Inspecting comment {cmt.id} for emoticons under {cmt.submission.id}")
-        detect_and_reply(cmt.body, cmt=cmt)
+def get_open_submissions_and_comments(reddit):
+    categories = ["hot", "new"]
+    comments = []
+    submissions = get_submissions(reddit, categories=categories, subreddit="nepal")
+    [
+        comments.extend(get_submission_comments(sub)) for sub in submissions
+    ]
+    open_submissions = {
+        sub for sub in submissions if is_open(post=sub)
+    }
+    open_comments = {
+        cmt for cmt in comments if is_open(comment=cmt)
+    }
+    print(f"Got {len(open_comments)} comments & {len(open_submissions)} posts")
+    
+    return open_submissions, open_comments
 
 
-def detect_and_reply(text, post=None, cmt=None):
-    element = post if post else cmt
+def detect_emotion(text):
     reply_message = ""
     emotions = replies_data.keys()
     for emotion in emotions:
         if detected(emotion, text):
-            reply_message = gen_reply_message(element, emotion)
-            break
-    else:
-        return
+            return emotion
 
-    reply(reply_message, post=post, cmt=cmt)
-
-
-def get_children_comments(parent):
-    comments = []
-    for cmt in parent.comments():
-        if type(cmt) is praw.models.reddit.more.MoreComments:
-            comments += get_children_comments(cmt)
-        elif type(cmt) is praw.models.reddit.comment.Comment:
-            comments.append(cmt)
-        else:
-            print(f"Unrecognized comment type {type(cmt)}")
-    return comments
-
-
-def reply(reply_message, cmt=None, post=None):
-    submission = cmt.submission if not post else post
-    submission_closed = submission.locked or submission.archived
-    # Since both comment and element will have property author and reply
-    # We will refer them both as element
-    element = cmt if cmt else submission
-    print(f"replying to {element.id} under submission {submission.id}")
-    replied_ids = get_replied_data()["EMUJI_BOT"]
-
-    if not submission_closed and element.id not in replied_ids:
-        print("Submission open commenting...")
-        try_commenting(element, reply_message)
-    else:
-        print(f"Submission {submission.id} closed: Archived or Locked. Cannot comment ")
-
-
-def try_commenting(element, reply_message):
-    try:
-        element.reply(reply_message)
-        print(f"Replied {element.author} {reply_message}")
-        update_replied_data(element.id)
-    except RedditAPIException as e:
-        print(f"LIMIT REACHED: {e} sleeping ")
-        time.sleep(TIME_LIMIT)
-        try_commenting(reply_message)
-
-
-def gen_reply_message(element, emotion):
-    replies = replies_data[emotion]
-    random.shuffle(replies)
-    core_reply = random.choice(replies)
-    author = f"u/{element.author}" if element.author else ""
-    full_message = core_reply.format(author=author)
-    print(f"Generated reply message {full_message}")
-    return full_message
+    return None
 
 
 def detected(emotion, text):
@@ -163,16 +103,25 @@ def detected(emotion, text):
     return False
 
 
-def load_emoticons_from_db():
-    with open("emojidb.json", "r") as rf:
-        data = json.load(rf)
-    emojis = data["all_emojis"]
-    return emojis
+def gen_reply_message(element, emotion):
+    replies = replies_data[emotion]
+    random.shuffle(replies)
+    core_reply = random.choice(replies)
+
+    # TESTING PURPOSES ONLY
+    text = element.body if hasattr(element, 'body') else (element.title +
+                                                          element.selftext)
+    author = f"{element.author}" if element.author else ""
+    #author = f"u/{element.author}" if element.author else ""
+    full_message = f">{author} \n\n > {text} \n\n"
+    full_message += core_reply.format(author=author)
+    #full_message = core_reply.format(author=author)
+    # --------------------------------------
+
+    full_message += "\n\n {footer_string}"
+    print(f"Generated reply message {full_message}")
+    return full_message
 
 
 if __name__ == "__main__":
-    reddit = login()
-    comments, submissions = get_comments_and_submissions(reddit, subreddit="nepal")
-    print(f"Scanned {len(submissions)} submissions and {len(comments)} comments")
-    inspect_comments_and_reply(comments)
-    inspect_submissions_and_reply(submissions)
+    main()
