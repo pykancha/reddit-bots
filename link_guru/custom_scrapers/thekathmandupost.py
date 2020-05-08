@@ -10,7 +10,8 @@ def get_news(url):
     date = __get_date(soup)
     image = __get_image(soup)
 
-    data = {"text": content, "title": title, "date": date, "image": image}
+    data = {"text": content, "title": title, "date": date, "image": image,
+            "summary":''}
     return data
 
 
