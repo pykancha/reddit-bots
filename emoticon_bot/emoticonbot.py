@@ -118,7 +118,7 @@ def gen_reply_message(element, emotion):
     #full_message = core_reply.format(author=author)
     # --------------------------------------
 
-    full_message += "\n\n {footer_string}"
+    full_message += f"\n\n {footer_string}"
     print(f"Generated reply message {full_message}")
     return full_message
 
