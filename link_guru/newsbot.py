@@ -33,9 +33,8 @@ def main():
     print(f"Got {len(open_unreplied_submissions)} valid submissions")
     for submission in open_unreplied_submissions:
         news = get_news_with_translation(submission.url, submission.domain)
-        if not news:
-            continue
-        reply_and_update_ids(reddit, news, submission)
+        if news:
+            reply_and_update_ids(reddit, news, submission)
 
 
 def reply_and_update_ids(reddit, news, element):
@@ -51,7 +50,6 @@ def reply_and_update_ids(reddit, news, element):
         update_replied_ids(REPLIED_FILE_PATH, element.id)
         if child_reply:
             reply(child_reply, replied_cmt)
-    return replied_cmt
 
 
 def get_submissions_with_supported_link(reddit):
@@ -69,8 +67,8 @@ def get_submissions_with_supported_link(reddit):
             matched_submissions.append(sub)
         elif 'News' in flair and not 'reddit' in sub.url:
             matched_submissions.append(sub)
-             
     print(f"{[(sub.id, sub.domain, sub.author) for sub in matched_submissions]}")
+
     return matched_submissions
 
 
@@ -121,6 +119,8 @@ def matched_link(url, make_pattern=None):
 
     match = None
     for pattern in patterns:
+        if 'nagarik' in pattern:
+            print(pattern, url)
         match = re.search(pattern, url)
         if match and match.group():
             print(f"Matched {url}")
