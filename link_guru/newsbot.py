@@ -14,7 +14,7 @@ from templates.news import NewsTemplate
 
 
 SITES_FILE_PATH = Path("supported_sites.json")
-REPLIED_FILE_PATH = Path("test_replied_to.json")
+REPLIED_FILE_PATH = Path("replied_to.json")
 
 
 def main():
