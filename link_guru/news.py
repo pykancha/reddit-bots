@@ -36,7 +36,7 @@ def get_news(url):
     return data
 
 
-def get_summary(full_news, full_news_en=None, limit=1000):
+def get_summary(full_news, full_news_en=None, limit=3000):
     """
     Returns summary with translation
     param: full_news 
@@ -187,7 +187,7 @@ def __translate_from_mymemory(cuts):
 
 def __is_nepali(snippet):
     """ check for purnabiram if more than 3 we are on the no 3 is arbitrary
-    could be imporved """
+    could be improved """
 
     last_purnabiram = snippet.rfind("।")
     last_fullstop = snippet.rfind(".")
