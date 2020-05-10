@@ -67,7 +67,7 @@ def get_submissions_with_supported_link(reddit):
         flair = sub.link_flair_text
         if matched_link(sub.domain):
             matched_submissions.append(sub)
-        elif 'News' in flair and not 'reddit' in sub.url:
+        elif flair and 'News' in flair and not 'reddit' in sub.url:
             matched_submissions.append(sub)
     print(f"{[(sub.id, sub.domain, sub.author) for sub in matched_submissions]}")
 
