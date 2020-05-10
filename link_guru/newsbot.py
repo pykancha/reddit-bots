@@ -8,7 +8,7 @@ from bs4 import BeautifulSoup as BS
 from news import get_full_news, get_news, get_summary
 from custom_scrapers import custom_scrapers_map
 from reddit_helper import (get_replied_ids, get_submissions, is_open, login,
-                           reply, update_replied_ids, __cut_text)
+                           reply, update_replied_ids)
 from templates.footer import footer_string
 from templates.news import NewsTemplate
 
