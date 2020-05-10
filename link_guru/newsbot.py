@@ -51,6 +51,8 @@ def reply_and_update_ids(reddit, news, element):
         if child_reply:
             reply(child_reply, replied_cmt)
 
+    return replied_cmt
+
 
 def get_submissions_with_supported_link(reddit):
     """
@@ -119,8 +121,6 @@ def matched_link(url, make_pattern=None):
 
     match = None
     for pattern in patterns:
-        if 'nagarik' in pattern:
-            print(pattern, url)
         match = re.search(pattern, url)
         if match and match.group():
             print(f"Matched {url}")
@@ -197,7 +197,7 @@ def manage_mentions(reddit, replied_ids):
             print(f"Trying to extract unrecognized {link} in {element.id}")
             news = get_news_with_translation(link, link)
             if news:
-                reply_and_update_ids(news, element)
+                reply_and_update_ids(reddit, news, element)
 
 
 def extract_links_from_html(html):
