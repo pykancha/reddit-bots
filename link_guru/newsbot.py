@@ -49,8 +49,9 @@ def reply_and_update_ids(reddit, news, element):
 
     if replied_cmt:
         update_replied_ids(REPLIED_FILE_PATH, element.id)
-    if child_reply:
-        reply(child_reply, replied_cmt)
+        if child_reply:
+            reply(child_reply, replied_cmt)
+    return replied_cmt
 
 
 def get_submissions_with_supported_link(reddit):
@@ -66,7 +67,6 @@ def get_submissions_with_supported_link(reddit):
         flair = sub.link_flair_text
         if matched_link(sub.domain):
             matched_submissions.append(sub)
-            continue
         elif 'News' in flair and not 'reddit' in sub.url:
             matched_submissions.append(sub)
              
@@ -175,26 +175,29 @@ def manage_mentions(reddit, replied_ids):
         mention for mention in mentions if mention.id not in replied_ids
     )
     for index, element in enumerate(unreplied_mentions):
-        # If mentioned in post try translate without checking site support
-        if hasattr('element', 'title') and not 'reddit' in element.url:
-            news = get_news_with_translation(link, domain)
-            if news:
-                reply_and_update_ids(news, element)
-
-        # If not check for selftext and comment links and only translate 
+        # check for selftext and comment links and only translate 
         # Supported sites.
         links_with_domain = scan_for_matched_links(element)
         print(f"scanning {index} mention. Got links \n{links_with_domain}")
+        replied = []
         for link_domain in links_with_domain:
             link, domain = link_domain
             news = get_news_with_translation(link, domain)
-            if not news:
-                continue
-<<<<<<< HEAD
-            reply_and_update_ids(reddit, news, element)
-=======
-            reply_and_update_ids(news, element)
->>>>>>> c48cc9c... Adds mentioning capability
+            if news:
+                result = reply_and_update_ids(reddit, news, element)
+                replied.append(True) if result else False
+        
+        if True in replied:
+            continue
+
+        # We were unable to detect and reply the mention. We assume good faith
+        # If mentioned in post try translate without checking site support
+        link = element.url
+        if hasattr(element, 'title') and link and not 'reddit' in link:
+            print(f"Trying to extract unrecognized {link} in {element.id}")
+            news = get_news_with_translation(link, link)
+            if news:
+                reply_and_update_ids(news, element)
 
 
 def extract_links_from_html(html):
