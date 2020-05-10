@@ -8,7 +8,7 @@ from bs4 import BeautifulSoup as BS
 from news import get_full_news, get_news, get_summary
 from custom_scrapers import custom_scrapers_map
 from reddit_helper import (get_replied_ids, get_submissions, is_open, login,
-                           reply, update_replied_ids, __cut_text)
+                           reply, update_replied_ids)
 from templates.footer import footer_string
 from templates.news import NewsTemplate
 
@@ -33,9 +33,8 @@ def main():
     print(f"Got {len(open_unreplied_submissions)} valid submissions")
     for submission in open_unreplied_submissions:
         news = get_news_with_translation(submission.url, submission.domain)
-        if not news:
-            continue
-        reply_and_update_ids(news, submission)
+        if news:
+            reply_and_update_ids(news, submission)
 
 
 def reply_and_update_ids(news, element):
@@ -44,8 +43,10 @@ def reply_and_update_ids(news, element):
     replied_cmt = reply(main_reply, element)
     if replied_cmt:
         update_replied_ids(REPLIED_FILE_PATH, element.id)
-    if child_reply:
-        reply(child_reply, replied_cmt)
+        if child_reply:
+            reply(child_reply, replied_cmt)
+
+    return replied_cmt
 
 
 def get_submissions_with_supported_link(reddit):
@@ -61,8 +62,7 @@ def get_submissions_with_supported_link(reddit):
         flair = sub.link_flair_text
         if matched_link(sub.domain):
             matched_submissions.append(sub)
-            continue
-        elif 'News' in flair and not 'reddit' in sub.url:
+        elif flair and 'News' in flair and not 'reddit' in sub.url:
             matched_submissions.append(sub)
              
     print(f"{[(sub.id, sub.domain, sub.author) for sub in matched_submissions]}")
@@ -100,6 +100,7 @@ def get_news_with_translation(url, domain):
         "full_news": full_news,
         "full_news_en": full_news_en,
     }
+
     return news
 
 
@@ -170,22 +171,29 @@ def manage_mentions(reddit, replied_ids):
         mention for mention in mentions if mention.id not in replied_ids
     )
     for index, element in enumerate(unreplied_mentions):
-        # If mentioned in post try translate without checking site support
-        if hasattr('element', 'title') and not 'reddit' in element.url:
-            news = get_news_with_translation(link, domain)
-            if news:
-                reply_and_update_ids(news, element)
-
-        # If not check for selftext and comment links and only translate 
+        # check for selftext and comment links and only translate 
         # Supported sites.
         links_with_domain = scan_for_matched_links(element)
         print(f"scanning {index} mention. Got links \n{links_with_domain}")
+        replied = []
         for link_domain in links_with_domain:
             link, domain = link_domain
             news = get_news_with_translation(link, domain)
-            if not news:
-                continue
-            reply_and_update_ids(news, element)
+            if news:
+                result = reply_and_update_ids(news, element)
+                replied.append(True) if result else False
+        
+        if True in replied:
+            continue
+
+        # We were unable to detect and reply the mention. We assume good faith
+        # If mentioned in post try translate without checking site support
+        link = element.url
+        if hasattr(element, 'title') and link and not 'reddit' in link:
+            print(f"Trying to extract unrecognized {link} in {element.id}")
+            news = get_news_with_translation(link, link)
+            if news:
+                reply_and_update_ids(news, element)
 
 
 def extract_links_from_html(html):
