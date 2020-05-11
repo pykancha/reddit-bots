@@ -61,13 +61,14 @@ def get_summary(full_news, full_news_en=None, limit=3000):
     return summary, summary_en
 
 
-def get_full_news(title, text):
+def get_full_news(text):
     '''
-    ** is used to highlight the title in reddit comment.
-    Of course we only want to translate if it is in nepali.
+    We only want to translate if it is in nepali.
     '''
-    
-    full_news = f"**{title}** \n\n{text}"
+    full_news = text
+    if '\n\n' not in full_news:
+        full_news = "\n\n".join(__cut_text(full_news, length=500))
+
     full_news_en = ''
     if __is_nepali(full_news):
         full_news_en = translate(full_news, google_only=True)

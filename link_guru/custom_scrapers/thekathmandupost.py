@@ -10,8 +10,14 @@ def get_news(url):
     date = __get_date(soup)
     image = __get_image(soup)
 
-    data = {"text": content, "title": title, "date": date, "image": image,
-            "summary":''}
+    data = {
+        "text": content,
+        "title": title,
+        "date": date,
+        "img_url": image,
+        "url":url,
+        "summary": ""
+    }
     return data
 
 
@@ -33,9 +39,10 @@ def __get_content(soup):
             "div.col-sm-8 > div:nth-child(8) > div > div"
             ".subscribe--wrapperx > section"
         )[0].get_text()
+
         text = __get_subtitle(soup) + raw_text
-        text = __sanitize_text(text)
-        return text
+        full_text = __sanitize_text(text)
+        return full_text
     except Exception as e:
         print(f"Error: scraper exception {e}")
         return ""

@@ -5,11 +5,10 @@ from pathlib import Path
 
 from bs4 import BeautifulSoup as BS
 
-from news import get_full_news, get_news, get_summary
+from news import get_full_news, get_news, get_summary, translate
 from custom_scrapers import custom_scrapers_map
 from reddit_helper import (get_replied_ids, get_submissions, is_open, login,
                            reply, update_replied_ids)
-from templates.footer import footer_string
 from templates.news import NewsTemplate
 
 
@@ -77,15 +76,19 @@ def get_news_with_translation(url, domain):
         return None
 
     title = data["title"].strip()
+    title_en = ''
     text = data["text"]
     short_text = data["summary"]
     if not text or len(text) < len(short_text):
         text = data["summary"]
 
+    if title:
+        title_en = translate(title)
+
     full_translation = None
-    if title and (text and len(text) > 400):
-        full_news, full_news_en = get_full_news(title, text)
-        # Since we avoid mymemory translation on full_news it might be empty or wrong
+    if text and len(text) > 400:
+        full_news, full_news_en = get_full_news(text)
+        # Since we avoid mymemory translation on full_news, it might be empty or wrong
         if full_news_en.strip() and len(full_news_en) > len(full_news) / 2:
             full_translation = full_news_en
         summary, summary_en = get_summary(full_news, full_news_en=full_translation)
@@ -94,10 +97,13 @@ def get_news_with_translation(url, domain):
         return None
 
     news = {
+        "title": title,
+        "title_en":title_en,
         "summary": summary,
         "summary_en": summary_en,
         "full_news": full_news,
         "full_news_en": full_news_en,
+        "image": data['img_url']
     }
 
     return news
@@ -125,18 +131,34 @@ def matched_link(url, make_pattern=None):
 
 
 def gen_reply_message(news):
-    main_reply = NewsTemplate.heading_string
+    NT = NewsTemplate
     child_reply = None
-    first_reply = news['summary']
-    translated_summary = news["full_news_en"]
-    if not translated_summary:
-        translated_summary = news['summary_en']
 
-    if translated_summary and translated_summary.strip():
-        main_reply += NewsTemplate.translation_string
-        child_reply = translated_summary.replace("** ", "**").replace(" **", "**")
+    text = news['summary']
+    text_en = news["full_news_en"] if news['full_news_en'] else news['summary_en']
+    title = NT.title.format(title=news['title']) if news['title'] else ''
+    title_en = NT.title.format(title=news['title_en']) if news['title_en'] else ''
+    image = NT.image.format(image=news['image']) if news['image'] else  ''
+    date = ''
 
-    main_reply += f"{first_reply}{footer_string}"
+    translation_info = ''
+    if text_en and text_en.strip():
+        translation_info = NT.translation if NT.translation else ''
+        child_reply = NT.framework_en.format(
+            title=title_en,
+            date=date,
+            image=image,
+            text=text_en
+        )
+
+    main_reply = NT.framework.format(
+        translation_info=translation_info,
+        title=title,
+        date=date,
+        image=image,
+        text=text
+    ) 
+
     return main_reply, child_reply
 
 
