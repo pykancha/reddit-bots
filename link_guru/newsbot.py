@@ -13,14 +13,13 @@ from templates.footer import footer_string
 from templates.news import NewsTemplate
 
 
+USERNAME = "link_guru"
 SITES_FILE_PATH = Path("supported_sites.json")
 REPLIED_FILE_PATH = Path("test_replied_to.json")
 
 
 def main():
-    USERNAME = "link_guru"
     reddit = login(USERNAME)
-
     replied_ids = get_replied_ids(REPLIED_FILE_PATH)
     manage_mentions(reddit, replied_ids)
 
@@ -160,7 +159,8 @@ def scan_for_matched_links(element):
 
     parent = element.parent()
     if hasattr(parent, 'title'):
-        new_html = parent.selftext_html + f' <a href="{parent.url}"></a>'
+        selftext = parent.selftext_html if parent.selftext_html else ''
+        new_html = selftext + f' <a href="{parent.url}"></a>'
         print(f"submission detected \n{new_html}")
     else:
         new_html = parent.body_html
@@ -170,13 +170,14 @@ def scan_for_matched_links(element):
 
 
 def manage_mentions(reddit, replied_ids):
-    mentions = reddit.inbox.mentions()
+    mentions = reddit.inbox.mentions(limit=100)
     unreplied_mentions = (
         mention for mention in mentions if mention.id not in replied_ids
     )
     for index, element in enumerate(unreplied_mentions):
         # check for selftext and comment links and only translate 
         # Supported sites.
+        update_replied_ids(REPLIED_FILE_PATH, element.id)
         links_with_domain = scan_for_matched_links(element)
         print(f"scanning {index} mention. Got links \n{links_with_domain}")
         replied = []
