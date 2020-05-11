@@ -193,13 +193,19 @@ def manage_mentions(reddit, replied_ids):
 
         # We were unable to detect and reply the mention. We assume good faith
         # If mentioned in post try translate without checking site support
-        link = element.url
-        if hasattr(element, 'title') and link and not 'reddit' in link:
-            print(f"Trying to extract unrecognized {link} in {element.id}")
+        link = element.url if hasattr(element, 'url') else None
+        is_valid_post = link and not 'reddit' in link
+        if not is_valid_post:
+            continue
+
+        print(f"Trying to extract unrecognized {link} in {element.id}")
+        try:
             news = get_news_with_translation(link, link)
             if news:
                 reply_and_update_ids(reddit, news, element)
-
+        except Exception as e:
+            print(f"News extraction exception {e}")
+            
 
 def extract_links_from_html(html):
     soup = BS(html, features='lxml')
