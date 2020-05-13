@@ -66,15 +66,13 @@ def is_open(post=None, comment=None):
 
 def __try_commenting(element, reply_message):
     # If reddit time limits us  wait for 7 mins and try again
-    TIME_LIMIT = 7 * 61  # seconds
     try:
         bot_reply = element.reply(reply_message)
         print(f"Replied {element.id} {element.author} {reply_message}")
         return bot_reply
     except RedditAPIException as e:
         print(f"LIMIT REACHED: {e} sleeping ")
-        time.sleep(TIME_LIMIT)
-        __try_commenting(element, reply_message)
+        return None
 
 
 def update_replied_ids(file_path, element_id):
