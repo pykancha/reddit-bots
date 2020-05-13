@@ -12,7 +12,7 @@ from reddit_helper import (get_replied_ids, get_submissions, is_open, login,
 from templates.news import NewsTemplate
 
 
-USERNAME = "link_guru"
+USERNAME = "link-guru"
 SITES_FILE_PATH = Path("supported_sites.json")
 REPLIED_FILE_PATH = Path("test_replied_to.json")
 
