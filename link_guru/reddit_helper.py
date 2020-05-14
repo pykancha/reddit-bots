@@ -65,7 +65,7 @@ def is_open(post=None, comment=None):
 
 
 def __try_commenting(element, reply_message):
-    # If reddit time limits us  wait for 7 mins and try again
+    """ Returns replied Comment object if comment success else None """
     try:
         bot_reply = element.reply(reply_message)
         print(f"Replied {element.id} {element.author} {reply_message}")

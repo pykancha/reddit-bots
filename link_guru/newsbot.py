@@ -59,7 +59,7 @@ def get_submissions_with_supported_link(reddit):
         flair = sub.link_flair_text
         if matched_link(sub.domain):
             matched_submissions.append(sub)
-        elif flair and 'News' in flair and not 'reddit' in sub.url:
+        elif flair and 'News' in flair and __is_valid_link(sub.url):
             matched_submissions.append(sub)
              
     print(f"{[(sub.id, sub.domain, sub.author) for sub in matched_submissions]}")
@@ -211,8 +211,7 @@ def manage_mentions(reddit, replied_ids):
         # We were unable to detect and reply the mention. We assume good faith
         # If mentioned in post try translate without checking site support
         link = element.url if hasattr(element, 'url') else None
-        is_valid_post = link and not 'reddit' in link
-        if not is_valid_post:
+        if not (link and __is_valid_link(link)):
             continue
 
         print(f"Trying to extract unrecognized {link} in {element.id}")
@@ -222,6 +221,7 @@ def manage_mentions(reddit, replied_ids):
                 reply_and_update_ids(news, element)
         except Exception as e:
             print(f"News extraction exception {e}")
+
 
 def extract_links_from_html(html):
     soup = BS(html, features='lxml')
@@ -239,6 +239,25 @@ def extract_links_from_html(html):
 
     print(f"Extracted from html \n{links_with_domain}")
     return links_with_domain
+
+
+def __is_valid_link(url):
+    """
+    Gets a link and checks it parts to determine if it is an image,
+    or other invalid urls
+    """
+    is_valid_link = True
+    img_exts = ['.png', '.jpeg', '.gif', '.jpg']
+    keywords = ['imgur.com', 'redd.it', 'reddit.com', 'youtu.be',
+                'youtube.com', 'v.reddi.it', 'gfycat.com']
+    checks = img_exts + keywords
+
+    has_keyword = [True for i in checks if i in url]
+    if True in has_keyword:
+        is_valid_link = False
+    print(f"Is valid link for {url} : {is_valid_link}")
+
+    return is_valid_link
 
 
 if __name__ == "__main__":
