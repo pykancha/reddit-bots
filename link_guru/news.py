@@ -57,7 +57,10 @@ def get_summary(full_news, full_news_en=None, limit=3000):
     else:
         summary_en = translate(summary) if __is_nepali(summary) else None
 
+    summary = __ensure_paragraphs(summary)
+    summary_en = __ensure_paragraphs(summary_en)
     print(f"Got summary and its translation \n{summary} \n{summary_en}")
+
     return summary, summary_en
 
 
@@ -66,13 +69,15 @@ def get_full_news(text):
     We only want to translate if it is in nepali.
     '''
     full_news = text
-    if '\n\n' not in full_news:
-        full_news = "\n\n".join(__cut_text(full_news, length=500))
-
     full_news_en = ''
+
     if __is_nepali(full_news):
         full_news_en = translate(full_news, google_only=True)
+
+    full_news = __ensure_paragraphs(full_news)
+    full_news_en = __ensure_paragraphs(full_news_en)
     print(f"Got full_news and its translation \n{full_news} \n{full_news_en}")
+
     return full_news, full_news_en
 
 
@@ -199,3 +204,14 @@ def __is_nepali(snippet):
         return False
     else:
         return True
+
+
+def __ensure_paragraphs(text):
+    """ Checks if paragraph break in text else adds it and returns """
+    if "\n\n" in text:
+    # Paragraph break detected just return it 
+        return text
+
+    # If not detected add it ourselves
+    new_text = "\n\n".join(__cut_text(text, length=500))
+    return new_text
