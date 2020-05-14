@@ -1,7 +1,7 @@
 class NewsTemplate:
     title = "**{title}**"
     image = "[image]({image})"
-    date = "Date: {date}"
+    date = "Date: {date} "
     translation = "*See reply of this comment for English translation:*"
 
     framework = (

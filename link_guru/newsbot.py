@@ -1,5 +1,6 @@
 import json
 import re
+from datetime import datetime
 from pathlib import Path
 
 from bs4 import BeautifulSoup as BS
@@ -102,7 +103,9 @@ def get_news_with_translation(url, domain):
         "summary_en": summary_en,
         "full_news": full_news,
         "full_news_en": full_news_en,
-        "image": data['img_url']
+        "image": data['img_url'],
+        "url" : url,
+        "date" : data['date']
     }
 
     return news
@@ -135,10 +138,11 @@ def gen_reply_message(news):
 
     text = news['summary']
     text_en = news["full_news_en"] if news['full_news_en'] else news['summary_en']
-    title = NT.title.format(title=news['title']) if news['title'] else ''
-    title_en = NT.title.format(title=news['title_en']) if news['title_en'] else ''
+    title = NT.title.format(title=news['title'].strip()) if news['title'] else ''
+    title_en = NT.title.format(title=news['title_en'].strip()) if news['title_en'] else ''
     image = NT.image.format(image=news['image']) if news['image'] else  ''
-    date = ''
+    date = news['date'] if type(news['date']) is datetime else None
+    date = NT.date.format(date=date.strftime('%b %d %Y')) if date else ''
 
     translation_info = ''
     if text_en and text_en.strip():

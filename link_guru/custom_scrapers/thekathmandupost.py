@@ -89,7 +89,7 @@ def __parse_date(text):
     """ We receive a string like this "Published at : May 7, 2020 ". """
     date_part = text.split(":")[1].strip()
     date = datetime.strptime(date_part, "%B %d, %Y")
-    return datetime
+    return date
 
 
 def __sanitize_text(text):
