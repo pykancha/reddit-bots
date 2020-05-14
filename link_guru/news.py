@@ -55,7 +55,7 @@ def get_summary(full_news, full_news_en=None, limit=3000):
         print("Reusing translated full news")
         summary_en = __cut_text(full_news_en, length=limit)[0]
     else:
-        summary_en = translate(summary) if __is_nepali(summary) else None
+        summary_en = translate(summary) if __is_nepali(summary) else ''
 
     summary = __ensure_paragraphs(summary)
     summary_en = __ensure_paragraphs(summary_en)
