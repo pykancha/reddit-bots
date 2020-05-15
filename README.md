@@ -11,16 +11,19 @@ Every components of code is freely licensed for you to modify and use it however
 
 I manage the hosting/running of the bot separately and the database of replied posts/comments is maintained separately. If you need any kind of help in figuring this part I will be glad to assist you.
 
-# Link Guru Bot:
+# News TLDR Bot:
 What it does:
 
 1. Scans the subreddit and finds any linked news articles.
 2. Gets its summary and translation if its nepali.
-3. This is then posted as reply to the respective submissions
+3. From the english translation derive its summary using SMMRY API
+4. This is then posted as reply to the respective submissions
 
 The bot uses [custom fork](https://github.com/pykancha/newspaper3k_wrapper) of [newspaper/newspaper3k](https://github.com/codelucas/newspaper) python library for news extraction. 
 
 Similarly, it uses [googletrans](https://github.com/ssut/py-googletrans) python library for translation of news and [translate](https://github.com/terryyin/translate-python) python module as fallback translator.
+
+The summary is powered by [SMMRY](https://smmry.com).
 
 This bot runs every 15 minutes and scans the top 20 posts of 'hot', 'new' section of subreddit.
 
