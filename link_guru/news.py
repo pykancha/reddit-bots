@@ -5,11 +5,13 @@ It combines the two library googletrans/translate and newspaper_wrapper
 
 import os
 import time
+import json
 
+import requests
 from googletrans import Translator
+from translate import Translator as MyMemoryTranslator
 from newspaper_wrapper import Article
 from newspaper_wrapper.article import ArticleException
-from translate import Translator as MyMemoryTranslator
 
 
 def get_news(url):
@@ -20,7 +22,7 @@ def get_news(url):
         article.nlp()
     except ArticleException:
         print(f"Error: Download timeout {url}")
-        return 
+        return
 
     data = {
         "date": article.publish_date,
@@ -55,7 +57,7 @@ def get_summary(full_news, full_news_en=None, limit=3000):
         print("Reusing translated full news")
         summary_en = __cut_text(full_news_en, length=limit)[0]
     else:
-        summary_en = translate(summary) if __is_nepali(summary) else ''
+        summary_en = translate(summary) if __is_nepali(summary) else ""
 
     summary = __ensure_paragraphs(summary)
     summary_en = __ensure_paragraphs(summary_en)
@@ -65,11 +67,11 @@ def get_summary(full_news, full_news_en=None, limit=3000):
 
 
 def get_full_news(text):
-    '''
+    """
     We only want to translate if it is in nepali.
-    '''
+    """
     full_news = text
-    full_news_en = ''
+    full_news_en = ""
 
     if __is_nepali(full_news):
         full_news_en = translate(full_news, google_only=True)
@@ -95,6 +97,17 @@ def translate(text, google_only=False):
     if not translation:
         translation = __try_multi_request_translation(cuts, google_only)
     return translation
+
+
+def summarize_to_tldr(text):
+    SMMRY_KEY = os.getenv("NEWSTLDR_SMMRY_KEY")
+    SMMRY_URL = "https://api.smmry.com/"
+    url = SMMRY_URL + "&SM_API_KEY=" + SMMRY_KEY
+    headers = {"Expect": ""}
+    response = requests.post(url, data={"sm_api_input": text}, headers=headers)
+    summary = json.loads(response.content.decode("utf-8"))
+    print(f"Got tldr summary info \n{summary}")
+    return summary.get("sm_api_content")
 
 
 def __cut_text(text, length=500):
@@ -158,7 +171,7 @@ def __try_multi_request_translation(cuts, google_only):
 
 
 def __translate_from_google(cuts):
-    useragent = os.getenv("LINK_GURU_USERAGENT")
+    useragent = os.getenv("NEWSTLDR_USERAGENT")
     google_translator = Translator(user_agent=useragent)
     translation = ""
     for paragraph in cuts:
@@ -175,7 +188,7 @@ def __translate_from_google(cuts):
 
 
 def __translate_from_mymemory(cuts):
-    secret = os.getenv("LINK_GURUBOT_MYMEMORY_KEY")
+    secret = os.getenv("NEWSTLDR_MYMEMORY_KEY")
     mymemory_translator = MyMemoryTranslator(
         from_lang="ne", to_lang="en", secret_access_key=secret
     )
@@ -191,6 +204,7 @@ def __translate_from_mymemory(cuts):
 
     return translation.strip()
 
+
 def __is_nepali(snippet):
     """ check for purnabiram if more than 3 we are on the no 3 is arbitrary
     could be improved """
@@ -199,7 +213,7 @@ def __is_nepali(snippet):
     last_fullstop = snippet.rfind(".")
     # rfind returns -1 on failure
     if last_purnabiram == -1 and last_fullstop != -1:
-       return False 
+        return False
     elif not snippet.count("।") > 3:
         return False
     else:
@@ -209,7 +223,7 @@ def __is_nepali(snippet):
 def __ensure_paragraphs(text):
     """ Checks if paragraph break in text else adds it and returns """
     if "\n\n" in text:
-    # Paragraph break detected just return it 
+        # Paragraph break detected just return it
         return text
 
     # If not detected add it ourselves
