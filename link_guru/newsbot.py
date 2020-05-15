@@ -5,14 +5,20 @@ from pathlib import Path
 
 from bs4 import BeautifulSoup as BS
 
-from news import get_full_news, get_news, get_summary, translate
+from news import get_full_news, get_news, get_summary, translate, summarize_to_tldr
 from custom_scrapers import custom_scrapers_map
-from reddit_helper import (get_replied_ids, get_submissions, is_open, login,
-                           reply, update_replied_ids)
+from reddit_helper import (
+    get_replied_ids,
+    get_submissions,
+    is_open,
+    login,
+    reply,
+    update_replied_ids,
+)
 from templates.news import NewsTemplate
 
 
-USERNAME = "link-guru"
+USERNAME = 'news-tldr'
 SITES_FILE_PATH = Path("supported_sites.json")
 REPLIED_FILE_PATH = Path("test_replied_to.json")
 
@@ -36,18 +42,16 @@ def main():
 
 
 def reply_and_update_ids(reddit, news, element):
-    main_reply, child_reply = gen_reply_message(news)
+    reply_message = gen_reply_message(news)
 
     # TESTING ONLY IS PURPOSES. SOONER IF POSSIBLE REMOVE
-    test_submission = reddit.submission(id='gezfqs')
-    replied_cmt = reply(main_reply, test_submission)
-    #replied_cmt = reply(main_reply, element)
+    test_submission = reddit.submission(id="gezfqs")
+    replied_cmt = reply(reply_message, test_submission)
+    # replied_cmt = reply(first_reply, element)
     # ----------------------------
 
     if replied_cmt:
         update_replied_ids(REPLIED_FILE_PATH, element.id)
-        if child_reply:
-            reply(child_reply, replied_cmt)
 
     return replied_cmt
 
@@ -65,7 +69,7 @@ def get_submissions_with_supported_link(reddit):
         flair = sub.link_flair_text
         if matched_link(sub.domain):
             matched_submissions.append(sub)
-        elif flair and 'News' in flair and __is_valid_link(sub.url):
+        elif flair and "News" in flair and __is_valid_link(sub.url):
             matched_submissions.append(sub)
     print(f"{[(sub.id, sub.domain, sub.author) for sub in matched_submissions]}")
 
@@ -81,7 +85,7 @@ def get_news_with_translation(url, domain):
         return None
 
     title = data["title"].strip()
-    title_en = ''
+    title_en = ""
     text = data["text"]
     short_text = data["summary"]
     if not text or len(text) < len(short_text):
@@ -98,19 +102,25 @@ def get_news_with_translation(url, domain):
             full_translation = full_news_en
         summary, summary_en = get_summary(full_news, full_news_en=full_translation)
     else:
-        print(f"Warning: Discarding data {title} \n{text}")
+        print(f"Warning: Discarding data text {title} \n{text}")
+        return None
+
+    tldr = ''
+    if summary_en.strip() or full_news_en.strip():
+        tldr = (
+            summarize_to_tldr(full_news_en)
+            if full_news_en
+            else summarize_to_tldr(summary_en)
+        )
+
+    if not tldr or len(tldr) < 300:
+        print(f"Warning: Discarding data: tldr \n{tldr}")
         return None
 
     news = {
-        "title": title,
-        "title_en":title_en,
-        "summary": summary,
-        "summary_en": summary_en,
-        "full_news": full_news,
-        "full_news_en": full_news_en,
-        "image": data['img_url'],
-        "url" : url,
-        "date" : data['date']
+        "title_en": title_en,
+        "tldr": tldr,
+        "image": data["img_url"],
     }
     return news
 
@@ -131,42 +141,28 @@ def matched_link(url, make_pattern=None):
         match = re.search(pattern, url)
         if match and match.group():
             print(f"Matched {url}")
-            break;
+            break
 
     return match
 
 
 def gen_reply_message(news):
     NT = NewsTemplate
-    child_reply = None
+    title_en = (
+        NT.title.format(title=news["title_en"].strip()) if news["title_en"] else ""
+    )
+    image = NT.image.format(image=news["image"]) if news["image"] else ""
+    tldr = news['tldr']
 
-    text = news['summary']
-    text_en = news["full_news_en"] if news['full_news_en'] else news['summary_en']
-    title = NT.title.format(title=news['title'].strip()) if news['title'] else ''
-    title_en = NT.title.format(title=news['title_en'].strip()) if news['title_en'] else ''
-    image = NT.image.format(image=news['image']) if news['image'] else  ''
-    date = news['date'] if type(news['date']) is datetime else None
-    date = NT.date.format(date=date.strftime('%b %d %Y')) if date else ''
-
-    translation_info = ''
-    if text_en and text_en.strip():
-        translation_info = NT.translation if NT.translation else ''
-        child_reply = NT.framework_en.format(
-            title=title_en,
-            date=date,
-            image=image,
-            text=text_en
-        )
-
-    main_reply = NT.framework.format(
-        translation_info=translation_info,
-        title=title,
-        date=date,
+    tldr_message = NT.tldr.format(
+        tldr = tldr,
+        title=title_en,
         image=image,
-        text=text
-    ) 
+        footer=NT.footer
+    )
+    print(f"Got tldr message, \n {tldr_message}")
 
-    return main_reply, child_reply
+    return tldr_message
 
 
 def map_to_scraper(domain):
@@ -183,8 +179,8 @@ def scan_for_matched_links(element):
         return links_with_domain
 
     parent = element.parent()
-    if hasattr(parent, 'title'):
-        selftext = parent.selftext_html if parent.selftext_html else ''
+    if hasattr(parent, "title"):
+        selftext = parent.selftext_html if parent.selftext_html else ""
         new_html = selftext + f' <a href="{parent.url}"></a>'
         print(f"submission detected \n{new_html}")
     else:
@@ -200,7 +196,7 @@ def manage_mentions(reddit, replied_ids):
         mention for mention in mentions if mention.id not in replied_ids
     )
     for index, element in enumerate(unreplied_mentions):
-        # check for selftext and comment links and only translate 
+        # check for selftext and comment links and only translate
         # Supported sites.
         update_replied_ids(REPLIED_FILE_PATH, element.id)
         links_with_domain = scan_for_matched_links(element)
@@ -212,13 +208,13 @@ def manage_mentions(reddit, replied_ids):
             if news:
                 result = reply_and_update_ids(reddit, news, element)
                 replied.append(True) if result else False
-        
+
         if True in replied:
             continue
 
         # We were unable to detect and reply the mention. We assume good faith
         # If mentioned in post try translate without checking site support
-        link = element.url if hasattr(element, 'url') else None
+        link = element.url if hasattr(element, "url") else None
         if not (link and __is_valid_link(link)):
             continue
 
@@ -229,12 +225,11 @@ def manage_mentions(reddit, replied_ids):
                 reply_and_update_ids(reddit, news, element)
         except Exception as e:
             print(f"News extraction exception {e}")
-            
 
 
 def extract_links_from_html(html):
-    soup = BS(html, features='lxml')
-    links = [a['href'] for a in soup.find_all('a')]
+    soup = BS(html, features="lxml")
+    links = [a["href"] for a in soup.find_all("a")]
     print(f"Got links from html \n{links}")
 
     pattern_str = r"(http|https)?(://)?(www\.)?({site})/(.)*\b"
@@ -244,7 +239,7 @@ def extract_links_from_html(html):
     for link in links:
         match = matched_link(link, make_pattern=pattern_maker)
         if match and match.group(4):
-            links_with_domain.append( (link, match.group(4)) )
+            links_with_domain.append((link, match.group(4)))
 
     print(f"Extracted from html \n{links_with_domain}")
     return links_with_domain
@@ -256,9 +251,16 @@ def __is_valid_link(url):
     or other invalid urls
     """
     is_valid_link = True
-    img_exts = ['.png', '.jpeg', '.gif', '.jpg']
-    keywords = ['imgur.com', 'redd.it', 'reddit.com', 'youtu.be',
-                'youtube.com', 'v.reddi.it', 'gfycat.com']
+    img_exts = [".png", ".jpeg", ".gif", ".jpg"]
+    keywords = [
+        "imgur.com",
+        "redd.it",
+        "reddit.com",
+        "youtu.be",
+        "youtube.com",
+        "v.reddi.it",
+        "gfycat.com",
+    ]
     checks = img_exts + keywords
 
     has_keyword = [True for i in checks if i in url]
