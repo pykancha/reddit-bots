@@ -13,6 +13,10 @@ from translate import Translator as MyMemoryTranslator
 from newspaper_wrapper import Article
 from newspaper_wrapper.article import ArticleException
 
+from logger_file import Logger, prettify
+
+logger = Logger().get_logger()
+
 
 def get_news(url):
     article = Article(url, language="hi")
@@ -21,7 +25,7 @@ def get_news(url):
         article.parse()
         article.nlp()
     except ArticleException:
-        print(f"Error: Download timeout {url}")
+        logger.exception(f"Error: Download timeout: {url}")
         return
 
     data = {
@@ -34,7 +38,7 @@ def get_news(url):
         "video": article.movies,
         "url": url,
     }
-    print(f"Got news: \n{data}")
+    logger.info(f"Got news:{prettify(data)}")
     return data
 
 
@@ -54,14 +58,16 @@ def get_summary(full_news, full_news_en=None, limit=3000):
 
     summary = __cut_text(full_news, length=limit)[0]
     if full_news_en:
-        print("Reusing translated full news")
+        logger.info("Reusing translated full news")
         summary_en = __cut_text(full_news_en, length=limit)[0]
     else:
         summary_en = translate(summary) if __is_nepali(summary) else ""
 
     summary = __ensure_paragraphs(summary)
     summary_en = __ensure_paragraphs(summary_en)
-    print(f"Got summary and its translation \n{summary} \n{summary_en}")
+    logger.info(
+        "Got summary and its translation:" f"{prettify(summary)} {prettify(summary_en)}"
+    )
 
     return summary, summary_en
 
@@ -78,8 +84,10 @@ def get_full_news(text):
 
     full_news = __ensure_paragraphs(full_news)
     full_news_en = __ensure_paragraphs(full_news_en)
-    print(f"Got full_news and its translation \n{full_news} \n{full_news_en}")
-
+    logger.info(
+        "Got full_news and its translation:"
+        f"{prettify(full_news)} {prettify(full_news_en)}"
+    )
     return full_news, full_news_en
 
 
@@ -92,7 +100,7 @@ def translate(text, google_only=False):
     If it fails we use multi request operation.
     """
     cuts = __cut_text(text, length=500)
-    print(f"translate: Got cuts: \n{cuts}")
+    logger.info(f"translate: Got cuts:{prettify(cuts)}")
     translation = __try_single_request_translation(cuts)
     if not translation:
         translation = __try_multi_request_translation(cuts, google_only)
@@ -106,7 +114,7 @@ def summarize_to_tldr(text):
     headers = {"Expect": ""}
     response = requests.post(url, data={"sm_api_input": text}, headers=headers)
     summary = json.loads(response.content.decode("utf-8"))
-    print(f"Got tldr summary info \n{summary}")
+    logger.info(f"Got tldr summary info:{prettify(summary)}")
     time.sleep(10)
     return summary.get("sm_api_content")
 
@@ -124,26 +132,26 @@ def __cut_text(text, length=500):
         final_cut = cut[:3] -> 'ab.'
         pass_remaining_to_recursion, text=cut[3:] and length=5
         """
-        print("Cutting text")
+        logger.info("Cutting text")
         text_length = len(text)
         if length >= text_length:
             cuts.append(text)
             return
         else:
-            print(f"length {length} is smaller than text {len(text)}")
+            logger.info(f"length {length} is smaller than text {len(text)}")
             snippet = text[:length]
-            print(f"generated snippet \n{snippet}")
+            logger.info(f"generated snippet:{prettify(snippet)}")
             last_purnabiram = snippet.rfind("।") + 1
             last_fullstop = snippet.rfind(".") + 1
             # rfind returns -1 on failure (-1 + 1) == 0
             if last_purnabiram == 0 and last_fullstop == 0:
                 raise ValueError("No purnabiram or fullstop found in given length")
             punctuation = last_purnabiram if last_purnabiram else last_fullstop
-            print(
+            logger.info(
                 f"Punctuation:{punctuation} fullstop:{last_fullstop} purnabiram:{last_purnabiram}"
             )
             valid_paragraph = snippet[:punctuation]
-            print(f"Generated valid paragraph \n{valid_paragraph}")
+            logger.info(f"Generated valid paragraph:{prettify(valid_paragraph)}")
             cuts.append(valid_paragraph)
             rec_cut(text[punctuation:], length)
 
@@ -166,7 +174,7 @@ def __try_multi_request_translation(cuts, google_only):
     """
     translation = __translate_from_google(cuts)
     if not translation and not google_only:
-        print("google failed Using mymemory")
+        logger.info("google failed Using mymemory")
         translation = __translate_from_mymemory(cuts)
     return translation
 
@@ -181,8 +189,8 @@ def __translate_from_google(cuts):
             translated = google_translator.translate(paragraph, src="ne")
             translation += translated.text
             time.sleep(5)  # Pray google wont ban our ip
-        except Exception as e:
-            print(f"Error during translation: {e}")
+        except Exception:
+            logger.exception("Error during translation:")
             return None
 
     return translation.strip()
@@ -199,8 +207,8 @@ def __translate_from_mymemory(cuts):
         try:
             translated_snippet = mymemory_translator.translate(paragraph)
             translation += translated_snippet
-        except Exception as e:
-            print(f"Error during translation: {e}")
+        except Exception:
+            logger.exception("Error during translation:")
             return None
 
     return translation.strip()

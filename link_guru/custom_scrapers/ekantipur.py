@@ -19,11 +19,11 @@ def get_news(url):
 
     data = {
         "text": content,
-        "title": title, 
+        "title": title,
         "img_url": image,
-        "date": '',
-        "summary":'',
-        "url":url
+        "date": "",
+        "summary": "",
+        "url": url,
     }
 
     return data
@@ -35,8 +35,8 @@ def __render_html(response, tries=3):
         return response
     except TimeoutError:
         if tries == 0:
-            return ''
-        __render_html(response, tries=tries-1)
+            return ""
+        __render_html(response, tries=tries - 1)
 
 
 def __get_title(response):
@@ -66,7 +66,7 @@ def __get_content(response):
 def __get_subtitle(response):
     try:
         sub_title = response.html.xpath(
-           "//*[@id='wrapper']/div[1]/main/article/div/div[2]/div[1]/div[2]" 
+            "//*[@id='wrapper']/div[1]/main/article/div/div[2]/div[1]/div[2]"
         )[0].text
         return sub_title + "\n"
     except Exception as e:
@@ -78,7 +78,7 @@ def __get_image(response):
     try:
         image = response.html.xpath(
             "//*[@id='wrapper']/div[1]/main/article/div/div[2]/div[2]/div/figure/img"
-        )[0].attrs['data-src']
+        )[0].attrs["data-src"]
 
         return image
     except Exception as e:
@@ -88,6 +88,6 @@ def __get_image(response):
 
 def __sanitize_text(text):
     # Replace all the \xa0 chars into ''
-    text = text.replace('\xa0', '')
+    text = text.replace("\xa0", "")
 
     return text

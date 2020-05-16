@@ -15,8 +15,8 @@ def get_news(url):
         "title": title,
         "date": date,
         "img_url": image,
-        "url":url,
-        "summary": ""
+        "url": url,
+        "summary": "",
     }
     return data
 

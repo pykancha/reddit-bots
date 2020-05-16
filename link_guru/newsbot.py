@@ -17,11 +17,13 @@ from reddit_helper import (
     update_replied_ids,
 )
 from templates.news import NewsTemplate
+from logger_file import Logger, prettify
 
 
-USERNAME = 'news-tldr'
+USERNAME = "news-tldr"
 SITES_FILE_PATH = Path("supported_sites.json")
 REPLIED_FILE_PATH = Path("test_replied_to.json")
+logger = Logger(name="newsbot").get_logger()
 
 
 def main():
@@ -31,11 +33,11 @@ def main():
 
     submissions = get_submissions_with_supported_link(reddit)
     unreplied_submissions = [sub for sub in submissions if sub.id not in replied_ids]
-    print(f"Got {len(unreplied_submissions)} unreplied submissions")
+    logger.info(f"Got {len(unreplied_submissions)} unreplied submissions")
     open_unreplied_submissions = {
         sub for sub in unreplied_submissions if is_open(post=sub)
     }
-    print(f"Got {len(open_unreplied_submissions)} valid submissions")
+    logger.info(f"Got {len(open_unreplied_submissions)} valid submissions")
     for submission in open_unreplied_submissions:
         news = get_news_with_translation(submission.url, submission.domain)
         if news:
@@ -69,20 +71,22 @@ def get_submissions_with_supported_link(reddit):
     categories = ["hot", "new"]
     submissions = get_submissions(reddit, categories=categories, subreddit="nepal")
     matched_submissions = []
+    patterns = gen_patterns()
     for sub in submissions:
         flair = sub.link_flair_text
-        if matched_link(sub.domain):
+        if matched_link(sub.domain, patterns):
             matched_submissions.append(sub)
         elif flair and "News" in flair and __is_valid_link(sub.url):
             matched_submissions.append(sub)
-    print(f"{[(sub.id, sub.domain, sub.author) for sub in matched_submissions]}")
 
+    matched_sub_data = [(sub.id, sub.domain, sub.author) for sub in matched_submissions]
+    logger.info(f"Got matched submissions: {prettify(matched_sub_data)}")
     return matched_submissions
 
 
 def get_news_with_translation(url, domain):
     url = url
-    print(f"Got url {url}")
+    logger.info(f"Got url {url}")
     scraper = map_to_scraper(domain)
     data = scraper(url)
     if not data:
@@ -106,10 +110,10 @@ def get_news_with_translation(url, domain):
             full_translation = full_news_en
         summary, summary_en = get_summary(full_news, full_news_en=full_translation)
     else:
-        print(f"Warning: Discarding data text {title} \n{text}")
+        logger.warning(f"Warning: Discarding data -> text:\n{title}{prettify(text)}")
         return None
 
-    tldr = ''
+    tldr = ""
     if summary_en.strip() or full_news_en.strip():
         tldr = (
             summarize_to_tldr(full_news_en)
@@ -117,13 +121,13 @@ def get_news_with_translation(url, domain):
             else summarize_to_tldr(summary_en)
         )
     else:
-        print("Error: Nothing got translated. Exiting")
+        logger.error("Error: Nothing got translated. Exiting")
         return
 
     if not tldr or len(tldr) < 300:
-        print(f"Warning: Discarding data: tldr \n{tldr}")
+        logger.warning(f"Warning: Discarding data -> tldr:{prettify(tldr)}")
         tldr = ""
-    
+
     news = {
         "title_en": title_en,
         "tldr": tldr,
@@ -135,7 +139,7 @@ def get_news_with_translation(url, domain):
     return news
 
 
-def matched_link(url, make_pattern=None):
+def gen_patterns(make_pattern=None):
     with SITES_FILE_PATH.open("r") as rf:
         sites = json.load(rf)
     # Make site name regex safe
@@ -143,14 +147,17 @@ def matched_link(url, make_pattern=None):
     if not make_pattern:
         make_pattern = lambda site: r"(www\.)?{site}".format(site=site)
     patterns = [make_pattern(site) for site in sites]
-    print(f"Generated patterns \n{patterns}")
-    print(f"Matching regex {url}")
+    logger.debug(f"Generated patterns:{prettify(patterns)}")
+    return patterns
 
+
+def matched_link(url, patterns):
+    logger.debug(f"Matching regex {url}")
     match = None
     for pattern in patterns:
         match = re.search(pattern, url)
         if match and match.group():
-            print(f"Matched {url}")
+            logger.debug(f"Matched {url}")
             break
 
     return match
@@ -169,12 +176,12 @@ def gen_reply_message(news):
         tldr_message = NT.tldr.format(
             tldr=tldr, title=title_en, image=image, footer=NT.footer, link=news["url"]
         )
-    print(f"Got tldr message, \n{tldr_message}")
+    logger.info(f"Got tldr message:{prettify(tldr_message)}")
 
     more_news = NT.summary.format(
         news=text_en, title=title_en, image=image, footer=NT.footer, link=news["url"]
     )
-    print(f"Got more_news \n{more_news}")
+    logger.info(f"Got more_news:{prettify(more_news)}")
 
     if tldr_message:
         replies = (tldr_message, more_news)
@@ -201,7 +208,7 @@ def scan_for_matched_links(element):
     if hasattr(parent, "title"):
         selftext = parent.selftext_html if parent.selftext_html else ""
         new_html = selftext + f' <a href="{parent.url}"></a>'
-        print(f"submission detected \n{new_html}")
+        logger.info(f"submission detected:{prettify(new_html)}")
     else:
         new_html = parent.body_html
     links_with_domain = extract_links_from_html(new_html)
@@ -219,7 +226,9 @@ def manage_mentions(reddit, replied_ids):
         # Supported sites.
         update_replied_ids(REPLIED_FILE_PATH, element.id)
         links_with_domain = scan_for_matched_links(element)
-        print(f"scanning {index} mention. Got links \n{links_with_domain}")
+        logger.debug(
+            "scanning {index} mention. Got links:" f"{prettify(links_with_domain)}"
+        )
         replied = []
         for link_domain in links_with_domain:
             link, domain = link_domain
@@ -237,30 +246,31 @@ def manage_mentions(reddit, replied_ids):
         if not (link and __is_valid_link(link)):
             continue
 
-        print(f"Trying to extract unrecognized {link} in {element.id}")
+        logger.debug(f"Trying to extract unrecognized {link} in {element.id}")
         try:
             news = get_news_with_translation(link, link)
             if news:
                 reply_and_update_ids(reddit, news, element)
-        except Exception as e:
-            print(f"News extraction exception {e}")
+        except Exception:
+            logger.exception("News extraction exception:")
 
 
 def extract_links_from_html(html):
     soup = BS(html, features="lxml")
     links = [a["href"] for a in soup.find_all("a")]
-    print(f"Got links from html \n{links}")
+    logger.debug(f"Got links from html:{prettify(links)}")
 
     pattern_str = r"(http|https)?(://)?(www\.)?({site})/(.)*\b"
     pattern_maker = lambda site: pattern_str.format(site=site)
     links_with_domain = []
+    patterns = gen_patterns(make_pattern=pattern_maker)
 
     for link in links:
-        match = matched_link(link, make_pattern=pattern_maker)
+        match = matched_link(link, patterns)
         if match and match.group(4):
             links_with_domain.append((link, match.group(4)))
 
-    print(f"Extracted from html \n{links_with_domain}")
+    logger.debug(f"Extracted from html: {prettify(links_with_domain)}")
     return links_with_domain
 
 
@@ -285,7 +295,7 @@ def __is_valid_link(url):
     has_keyword = [True for i in checks if i in url]
     if True in has_keyword:
         is_valid_link = False
-    print(f"Is valid link for {url} : {is_valid_link}")
+    logger.debug(f"Is valid link for {url} : {is_valid_link}")
 
     return is_valid_link
 
