@@ -107,6 +107,7 @@ def summarize_to_tldr(text):
     response = requests.post(url, data={"sm_api_input": text}, headers=headers)
     summary = json.loads(response.content.decode("utf-8"))
     print(f"Got tldr summary info \n{summary}")
+    time.sleep(10)
     return summary.get("sm_api_content")
 
 
@@ -117,9 +118,9 @@ def __cut_text(text, length=500):
         """Turn arbitary string cut to valid one by looking at last fullstop
         str = ab. cd. ef.
         Suppose input: text=str and length=5
-        if lenght >= str just dont cut and return str
+        if length >= str don't cut and just return str
         cut = str[:5] --> 'ab. c'
-        fullstop car at 2
+        fullstop char at 2
         final_cut = cut[:3] -> 'ab.'
         pass_remaining_to_recursion, text=cut[3:] and length=5
         """
@@ -179,7 +180,7 @@ def __translate_from_google(cuts):
         try:
             translated = google_translator.translate(paragraph, src="ne")
             translation += translated.text
-            time.sleep(2)  # Pray google wont ban our ip
+            time.sleep(5)  # Pray google wont ban our ip
         except Exception as e:
             print(f"Error during translation: {e}")
             return None

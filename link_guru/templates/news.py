@@ -7,8 +7,7 @@ class NewsTemplate:
 
 ^^contribute: [^^source](https://github.com/pykancha/reddit-bots)
 """
-
-    )
+)
 
     tldr = (
 """
@@ -16,9 +15,23 @@ Tl;dr version:
 
 {title}
 
-{image}
+{image} [Source]({link})
 
 {tldr}
+
+{footer}
+"""
+)
+
+    summary = (
+"""
+Summary of the news:
+        
+{title}
+
+{image} [Source]({link})
+
+{news}
 
 {footer}
 """
