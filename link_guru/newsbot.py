@@ -1,3 +1,4 @@
+import time
 import json
 import re
 from datetime import datetime
@@ -42,11 +43,14 @@ def main():
 
 
 def reply_and_update_ids(news, element):
-    reply_message = gen_reply_message(news)
-    replied_cmt = reply(reply_message, element)
+    main_reply, child_reply = gen_reply_message(news)
+    replied_cmt = reply(main_reply, element)
 
     if replied_cmt:
         update_replied_ids(REPLIED_FILE_PATH, element.id)
+        if child_reply:
+            time.sleep(10)
+            reply(child_reply, replied_cmt)
 
     return replied_cmt
 
@@ -107,15 +111,21 @@ def get_news_with_translation(url, domain):
             if full_news_en
             else summarize_to_tldr(summary_en)
         )
+    else:
+        print("Error: Nothing got translated. Exiting")
+        return
 
     if not tldr or len(tldr) < 300:
         print(f"Warning: Discarding data: tldr \n{tldr}")
-        return None
-
+        tldr = ""
+    
     news = {
         "title_en": title_en,
         "tldr": tldr,
         "image": data["img_url"],
+        "summary_en": summary_en,
+        "full_news_en": full_news_en,
+        "url": url,
     }
 
     return news
@@ -147,15 +157,28 @@ def gen_reply_message(news):
     title_en = (
         NT.title.format(title=news["title_en"].strip()) if news["title_en"] else ""
     )
+    text_en = news["full_news_en"] if news["full_news_en"] else news["summary_en"]
     image = NT.image.format(image=news["image"]) if news["image"] else ""
+
     tldr = news["tldr"]
+    tldr_message = ""
+    if tldr.strip():
+        tldr_message = NT.tldr.format(
+            tldr=tldr, title=title_en, image=image, footer=NT.footer, link=news["url"]
+        )
+    print(f"Got tldr message, \n{tldr_message}")
 
-    tldr_message = NT.tldr.format(
-        tldr=tldr, title=title_en, image=image, footer=NT.footer
+    more_news = NT.summary.format(
+        news=text_en, title=title_en, image=image, footer=NT.footer, link=news["url"]
     )
-    print(f"Got tldr message, \n {tldr_message}")
+    print(f"Got more_news \n{more_news}")
 
-    return tldr_message
+    if tldr_message:
+        replies = (tldr_message, more_news)
+    else:
+        replies = (more_news, None)
+
+    return replies
 
 
 def map_to_scraper(domain):
