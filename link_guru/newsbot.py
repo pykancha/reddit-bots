@@ -124,7 +124,6 @@ def get_news_with_translation(url, domain):
         "tldr": tldr,
         "image": data["img_url"],
         "summary_en": summary_en,
-        "full_news_en": full_news_en,
         "url": url,
     }
 
@@ -157,7 +156,7 @@ def gen_reply_message(news):
     title_en = (
         NT.title.format(title=news["title_en"].strip()) if news["title_en"] else ""
     )
-    text_en = news["full_news_en"] if news["full_news_en"] else news["summary_en"]
+    text_en = news["summary_en"]
     image = NT.image.format(image=news["image"]) if news["image"] else ""
 
     tldr = news["tldr"]

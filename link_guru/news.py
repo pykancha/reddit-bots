@@ -59,6 +59,9 @@ def get_summary(full_news, full_news_en=None, limit=3000):
     else:
         summary_en = translate(summary) if __is_nepali(summary) else ""
 
+    if not __is_nepali(summary):
+        summary_en = summary
+
     summary = __ensure_paragraphs(summary)
     summary_en = __ensure_paragraphs(summary_en)
     print(f"Got summary and its translation \n{summary} \n{summary_en}")
