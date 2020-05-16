@@ -9,11 +9,16 @@ import os
 import praw
 from praw.exceptions import RedditAPIException
 
+from logger_file import Logger
+
+
+logger = Logger().get_logger()
+
 
 def login(username):
     # rnepal-bot -> RNEPALBOT | link_guru -> LINK_GURU
     BOT_NAME = username.replace("-", "").upper()
-    print("Logging in ...")
+    logger.info("Logging in ...")
     reddit = praw.Reddit(
         client_id=os.getenv(f"{BOT_NAME}_ID"),
         client_secret=os.getenv(f"{BOT_NAME}_SECRET"),
@@ -21,7 +26,7 @@ def login(username):
         username=username,
         password=os.getenv(f"{BOT_NAME}_PASS"),
     )
-    print(f"Logged in as {username}. read_only: {reddit.read_only}")
+    logger.debug(f"Logged in as {username}. read_only: {reddit.read_only}")
     return reddit
 
 
@@ -48,13 +53,12 @@ def get_submission_comments(submission):
 
 
 def reply(reply_message, element):
-    post = element.submission if hasattr(element, 'submission') else element
-    print(f"replying to {element.id} under submission {post.id}")
+    post = element.submission if hasattr(element, "submission") else element
+    logger.info(f"replying to {element.id} under submission {post.id}")
     if is_open(post=post):
-        print("Submission open commenting...")
         return __try_commenting(element, reply_message)
     else:
-        print(f"ERROR: Submission {post.id} closed: Archived or Locked.")
+        logger.error(f"ERROR: Submission {post.id} closed: Archived or Locked.")
 
 
 def is_open(post=None, comment=None):
@@ -68,10 +72,10 @@ def __try_commenting(element, reply_message):
     """ Returns replied Comment object if comment success else None """
     try:
         bot_reply = element.reply(reply_message)
-        print(f"Replied {element.id} {element.author} {reply_message}")
+        logger.debug(f"Replied {element.id} {element.author} {reply_message}")
         return bot_reply
-    except RedditAPIException as e:
-        print(f"LIMIT REACHED: {e} sleeping ")
+    except RedditAPIException:
+        logger.exception("LIMIT REACHED: sleeping ")
         return None
 
 

@@ -15,7 +15,7 @@ Tl;dr version:
 
 {title}
 
-{image} [Source]({link})
+{image} [Article Link]({link})
 
 {tldr}
 
@@ -29,7 +29,7 @@ Summary of the news:
         
 {title}
 
-{image} [Source]({link})
+{image} [Article Link]({link})
 
 {news}
 
