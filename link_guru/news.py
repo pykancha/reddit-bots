@@ -75,6 +75,8 @@ def get_full_news(text):
 
     if __is_nepali(full_news):
         full_news_en = translate(full_news, google_only=True)
+    else:
+        full_news_en = full_news
 
     full_news = __ensure_paragraphs(full_news)
     full_news_en = __ensure_paragraphs(full_news_en)
