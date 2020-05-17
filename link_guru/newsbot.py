@@ -45,14 +45,11 @@ def main():
 
 
 def reply_and_update_ids(news, element):
-    main_reply, child_reply = gen_reply_message(news)
+    main_reply = gen_reply_message(news)
     replied_cmt = reply(main_reply, element)
-
     if replied_cmt:
         update_replied_ids(REPLIED_FILE_PATH, element.id)
-        if child_reply:
-            time.sleep(10)
-            reply(child_reply, replied_cmt)
+        time.sleep(10)
 
     return replied_cmt
 
@@ -115,19 +112,15 @@ def get_news_with_translation(url, domain):
             if full_news_en
             else summarize_to_tldr(summary_en)
         )
-    else:
-        logger.error("Error: Nothing got translated. Exiting")
-        return
 
     if not tldr or len(tldr) < 300:
         logger.warning(f"Warning: Discarding data -> tldr:{prettify(tldr)}")
-        tldr = ""
+        logger.error("Error: Nothing got translated. Exiting")
+        return
 
     news = {
         "title_en": title_en,
         "tldr": tldr,
-        "image": data["img_url"],
-        "summary_en": summary_en,
         "url": url,
     }
 
@@ -163,28 +156,13 @@ def gen_reply_message(news):
     title_en = (
         NT.title.format(title=news["title_en"].strip()) if news["title_en"] else ""
     )
-    text_en = news["summary_en"]
-    image = NT.image.format(image=news["image"]) if news["image"] else ""
-
     tldr = news["tldr"]
-    tldr_message = ""
-    if tldr.strip():
-        tldr_message = NT.tldr.format(
-            tldr=tldr, title=title_en, image=image, footer=NT.footer, link=news["url"]
-        )
+    tldr_message = NT.tldr.format(
+        tldr=tldr, title=title_en, image=image, footer=NT.footer, link=news["url"]
+    )
     logger.info(f"Got tldr message:{prettify(tldr_message)}")
 
-    more_news = NT.summary.format(
-        news=text_en, title=title_en, image=image, footer=NT.footer, link=news["url"]
-    )
-    logger.info(f"Got more_news:{prettify(more_news)}")
-
-    if tldr_message:
-        replies = (tldr_message, more_news)
-    else:
-        replies = (more_news, None)
-
-    return replies
+    return tldr_message
 
 
 def map_to_scraper(domain):
