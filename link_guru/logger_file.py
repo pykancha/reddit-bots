@@ -122,17 +122,13 @@ class Logger:
             logger.addHandler(debug_filehandler)
         return logger
 
-    def get_file_name(self):
-        nepal_time = self.get_nepali_time()
-        file_name = nepal_time.strftime("%b_%d_%Y_%-I:%M_%p") + ".log"
-        return file_name
-
     @staticmethod
-    def get_nepali_time():
+    def get_file_name():
         utc_time = datetime.datetime.utcnow()
         offset = datetime.timedelta(minutes=5 * 60 + 45)
         nepal_time = utc_time + offset
-        return nepali_time
+        file_name = nepal_time.strftime("%b_%d_%Y_%-I:%M_%p") + ".log"
+        return file_name
 
 
 def prettify(data):
