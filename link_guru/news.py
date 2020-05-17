@@ -113,7 +113,7 @@ def translate(text, google_only=False):
 
 
 def summarize_to_tldr(text):
-    SMMRY_KEY = os.getenv("NEWSTLDR_SMMRY_KEY")
+    SMMRY_KEY = os.getenv("SAMACHARTLDR_SMMRY_KEY")
     SMMRY_URL = "https://api.smmry.com/"
     url = SMMRY_URL + "&SM_API_KEY=" + SMMRY_KEY
     headers = {"Expect": ""}
@@ -185,7 +185,7 @@ def __try_multi_request_translation(cuts, google_only):
 
 
 def __translate_from_google(cuts):
-    useragent = os.getenv("NEWSTLDR_USERAGENT")
+    useragent = os.getenv("SAMACHARTLDR_USERAGENT")
     google_translator = Translator(user_agent=useragent)
     translation = ""
     for paragraph in cuts:
@@ -202,7 +202,7 @@ def __translate_from_google(cuts):
 
 
 def __translate_from_mymemory(cuts):
-    secret = os.getenv("NEWSTLDR_MYMEMORY_KEY")
+    secret = os.getenv("SAMACHARTLDR_MYMEMORY_KEY")
     mymemory_translator = MyMemoryTranslator(
         from_lang="ne", to_lang="en", secret_access_key=secret
     )

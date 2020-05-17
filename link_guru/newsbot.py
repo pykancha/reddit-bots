@@ -20,7 +20,7 @@ from templates.news import NewsTemplate
 from logger_file import Logger, prettify
 
 
-USERNAME = "news-tldr"
+USERNAME = "samachar-tldr"
 SITES_FILE_PATH = Path("supported_sites.json")
 REPLIED_FILE_PATH = Path("replied_to.json")
 logger = Logger(name="newsbot").get_logger()
