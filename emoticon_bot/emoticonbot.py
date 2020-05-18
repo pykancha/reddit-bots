@@ -15,39 +15,46 @@ from reddit_helper import (
     update_replied_ids,
     get_submission_comments,
 )
+from logger_file import Logger, prettify
+
+
+USERNAME = "emuji-bot"
+REPLIED_FILE_PATH = Path("replied_to.json")
+logger = Logger(name="emoticonbot").get_logger()
 
 
 def main():
-    USERNAME = "emuji-bot"
     reddit = login(USERNAME)
-    REPLIED_FILE_PATH = Path("replied_to.json")
-
     replied_ids = get_replied_ids(REPLIED_FILE_PATH)
     submissions, comments = get_open_submissions_and_comments(reddit)
     unreplied_submissions = [sub for sub in submissions if sub.id not in replied_ids]
     unreplied_comments = [cmt for cmt in comments if cmt.id not in replied_ids]
-    print(f"Got {len(unreplied_submissions)} valid submissions"
-          f"Got {len(unreplied_comments)} valid comments")
+    logger.info(
+        f"Got {len(unreplied_submissions)} valid submissions"
+        f"Got {len(unreplied_comments)} valid comments"
+    )
 
     for comment in unreplied_comments:
         text = comment.body
+        logger.debug(f"Got comment text:{prettify(text)}")
         emotion = detect_emotion(text)
         if not emotion:
             continue
-        
+
         reply_message = gen_reply_message(comment, emotion)
-        replied_cmt = reply(reply_message, cmt=comment)
+        replied_cmt = reply(reply_message, comment)
         if replied_cmt:
             update_replied_ids(REPLIED_FILE_PATH, comment.id)
 
     for submission in unreplied_submissions:
         text = submission.title + submission.selftext
+        logger.debug(f"Got submission text:{prettify(text)}")
         emotion = detect_emotion(text)
         if not emotion:
             continue
 
         reply_message = gen_reply_message(submission, emotion)
-        replied_cmt = reply(reply_message, post=submission)
+        replied_cmt = reply(reply_message, submission)
         if replied_cmt:
             update_replied_ids(REPLIED_FILE_PATH, submission.id)
 
@@ -56,17 +63,11 @@ def get_open_submissions_and_comments(reddit):
     categories = ["hot", "new"]
     comments = []
     submissions = get_submissions(reddit, categories=categories, subreddit="nepal")
-    [
-        comments.extend(get_submission_comments(sub)) for sub in submissions
-    ]
-    open_submissions = {
-        sub for sub in submissions if is_open(post=sub)
-    }
-    open_comments = {
-        cmt for cmt in comments if is_open(comment=cmt)
-    }
-    print(f"Got {len(open_comments)} comments & {len(open_submissions)} posts")
-    
+    [comments.extend(get_submission_comments(sub)) for sub in submissions]
+    open_submissions = {sub for sub in submissions if is_open(post=sub)}
+    open_comments = {cmt for cmt in comments if is_open(comment=cmt)}
+    logger.info(f"Got {len(open_comments)} comments & {len(open_submissions)} posts")
+
     return open_submissions, open_comments
 
 
@@ -84,9 +85,9 @@ def detected(emotion, text):
     emoticons = emoticons_data[emotion]
     for emoticon in emoticons:
         if emoticon in text:
-            print(f"detected {emotion} {emoticon}")
+            logger.info(f"detected {emotion} {emoticon}")
             return True
-    print(f"No {emotion} emotion Detected")
+    logger.info(f"No {emotion} emotion Detected")
     return False
 
 
@@ -97,7 +98,7 @@ def gen_reply_message(element, emotion):
 
     author = f"u/{element.author}" if element.author else ""
     full_message = core_reply.format(author=author)
-    print(f"Generated reply message {full_message}")
+    logger.debug(f"Generated reply message: {prettify(full_message)}")
     return full_message
 
 
