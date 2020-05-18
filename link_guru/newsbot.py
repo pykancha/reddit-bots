@@ -158,7 +158,7 @@ def gen_reply_message(news):
     )
     tldr = news["tldr"]
     tldr_message = NT.tldr.format(
-        tldr=tldr, title=title_en, image=image, footer=NT.footer, link=news["url"]
+        tldr=tldr, title=title_en, footer=NT.footer, link=news["url"]
     )
     logger.info(f"Got tldr message:{prettify(tldr_message)}")
 

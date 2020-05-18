@@ -22,12 +22,12 @@ class Logger:
     def __init__(
         self,
         name=None,
-        level="info",
+        level="debug",
         mode="a",
         debug_mode="w",
         file_name=None,
         debug_file=None,
-        console=True,
+        console=False,
         **kwargs,
     ):
         super().__init__(**kwargs)
@@ -48,9 +48,9 @@ class Logger:
         """
         level_dict = {
             "debug": logging.DEBUG,
+            "info": logging.INFO,
             "warning": logging.WARNING,
             "error": logging.ERROR,
-            "info": logging.INFO,
             "fatal": logging.FATAL,
             "critical": logging.CRITICAL,
         }

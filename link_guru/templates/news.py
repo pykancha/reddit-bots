@@ -1,6 +1,5 @@
 class NewsTemplate:
     title = "**{title}**"
-    image = "[image]({image})"
     footer = (
 """
 ----
@@ -15,23 +14,9 @@ Tl;dr version:
 
 {title}
 
-{image} [Article Link]({link})
+[Article Link]({link})
 
 {tldr}
-
-{footer}
-"""
-)
-
-    summary = (
-"""
-Summary of the news:
-        
-{title}
-
-{image} [Article Link]({link})
-
-{news}
 
 {footer}
 """
