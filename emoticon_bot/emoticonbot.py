@@ -26,7 +26,7 @@ logger = Logger(name="emoticonbot").get_logger()
 def main():
     reddit = login(USERNAME)
     submissions, comments = get_unreplied_open_submissions_and_comments(reddit)
-    for comment in unreplied_comments:
+    for comment in comments:
         text = comment.body
         logger.debug(f"Got comment text:{prettify(text)}")
         emotion = detect_emotion(text)
@@ -38,7 +38,7 @@ def main():
         if replied_cmt:
             update_replied_ids(REPLIED_FILE_PATH, comment.id)
 
-    for submission in unreplied_submissions:
+    for submission in submissions:
         text = submission.title + submission.selftext
         logger.debug(f"Got submission text:{prettify(text)}")
         emotion = detect_emotion(text)
@@ -51,7 +51,7 @@ def main():
             update_replied_ids(REPLIED_FILE_PATH, submission.id)
 
 
-def get_open_submissions_and_comments(reddit):
+def get_unreplied_open_submissions_and_comments(reddit):
     categories = ["hot", "new"]
     comments = []
     replied_ids = get_replied_ids(REPLIED_FILE_PATH)
@@ -63,7 +63,7 @@ def get_open_submissions_and_comments(reddit):
     unreplied_submissions = (sub for sub in open_submissions if sub.id not in replied_ids)
     unreplied_comments = (cmt for cmt in open_comments if cmt.id not in replied_ids)
 
-    return open_submissions, open_comments
+    return unreplied_submissions, unreplied_comments
 
 
 def detect_emotion(text):
