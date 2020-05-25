@@ -25,15 +25,7 @@ logger = Logger(name="emoticonbot").get_logger()
 
 def main():
     reddit = login(USERNAME)
-    replied_ids = get_replied_ids(REPLIED_FILE_PATH)
-    submissions, comments = get_open_submissions_and_comments(reddit)
-    unreplied_submissions = [sub for sub in submissions if sub.id not in replied_ids]
-    unreplied_comments = [cmt for cmt in comments if cmt.id not in replied_ids]
-    logger.info(
-        f"Got {len(unreplied_submissions)} valid submissions"
-        f"Got {len(unreplied_comments)} valid comments"
-    )
-
+    submissions, comments = get_unreplied_open_submissions_and_comments(reddit)
     for comment in unreplied_comments:
         text = comment.body
         logger.debug(f"Got comment text:{prettify(text)}")
@@ -62,11 +54,14 @@ def main():
 def get_open_submissions_and_comments(reddit):
     categories = ["hot", "new"]
     comments = []
+    replied_ids = get_replied_ids(REPLIED_FILE_PATH)
     submissions = get_submissions(reddit, categories=categories, subreddit="nepal")
     [comments.extend(get_submission_comments(sub)) for sub in submissions]
+
     open_submissions = {sub for sub in submissions if is_open(post=sub)}
     open_comments = {cmt for cmt in comments if is_open(comment=cmt)}
-    logger.info(f"Got {len(open_comments)} comments & {len(open_submissions)} posts")
+    unreplied_submissions = (sub for sub in open_submissions if sub.id not in replied_ids)
+    unreplied_comments = (cmt for cmt in open_comments if cmt.id not in replied_ids)
 
     return open_submissions, open_comments
 
