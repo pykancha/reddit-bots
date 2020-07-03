@@ -30,11 +30,11 @@ def main():
         text = comment.body
         logger.debug(f"Got comment text:{prettify(text)}")
         emotion = detect_emotion(text)
-        anti = comment.author == 'anti_emuji-bot'
+        anti = detect_anti(comment)
         if not emotion and not anti:
             continue
 
-        reply_message = gen_reply_message(comment, emotion)
+        reply_message = gen_reply_message(comment, emotion, anti=anti)
         replied_cmt = reply(reply_message, comment)
         if replied_cmt:
             update_replied_ids(REPLIED_FILE_PATH, comment.id)
@@ -67,6 +67,17 @@ def get_unreplied_open_submissions_and_comments(reddit):
     return unreplied_submissions, unreplied_comments
 
 
+def detect_anti(comment):
+    if not comment.author == 'anti_emuji-bot':
+        return False
+
+    replied = comment.parent and comment.parent.author == 'emuji-bot'
+    if replied and not comment.parent.body in replies_data['anti']:
+        return True
+
+    return False
+
+
 def detect_emotion(text):
     reply_message = ""
     emotions = replies_data.keys()
@@ -87,8 +98,10 @@ def detected(emotion, text):
     return False
 
 
-def gen_reply_message(element, emotion):
+def gen_reply_message(element, emotion, anti=False):
     replies = replies_data[emotion]
+    if anti:
+        replies = replies_data["anti"]
     random.shuffle(replies)
     core_reply = random.choice(replies)
 
