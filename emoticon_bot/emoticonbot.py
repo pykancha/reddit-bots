@@ -99,9 +99,7 @@ def detected(emotion, text):
 
 
 def gen_reply_message(element, emotion, anti=False):
-    replies = replies_data[emotion]
-    if anti:
-        replies = replies_data["anti"]
+    replies = replies_data[emotion] if not anti else replies_data['anti']
     random.shuffle(replies)
     core_reply = random.choice(replies)
 
