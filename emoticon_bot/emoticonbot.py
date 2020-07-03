@@ -71,8 +71,8 @@ def detect_anti(comment):
     if not comment.author in ['anti_emuji-bot', 'anti-emuji-bot']:
         return False
 
-    replied = comment.parent and comment.parent.author == 'emuji-bot'
-    if replied and not comment.parent.body in replies_data['anti']:
+    replied_to_me = comment.parent() and comment.parent().author == 'emuji-bot'
+    if replied_to_me and not comment.parent().body in replies_data['anti']:
         return True
 
     return False
