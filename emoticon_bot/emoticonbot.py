@@ -68,7 +68,7 @@ def get_unreplied_open_submissions_and_comments(reddit):
 
 
 def detect_anti(comment):
-    if not comment.author == 'anti_emuji-bot':
+    if not comment.author in ['anti_emuji-bot', 'anti-emuji-bot']:
         return False
 
     replied = comment.parent and comment.parent.author == 'emuji-bot'
