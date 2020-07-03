@@ -30,7 +30,7 @@ def main():
         text = comment.body
         logger.debug(f"Got comment text:{prettify(text)}")
         emotion = detect_emotion(text)
-        anti = comment.author == 'anti-emuji-bot'
+        anti = comment.author == 'anti_emuji-bot'
         if not emotion and not anti:
             continue
 
