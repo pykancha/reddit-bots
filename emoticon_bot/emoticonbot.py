@@ -80,7 +80,7 @@ def detect_anti(comment):
 
 def detect_emotion(text):
     reply_message = ""
-    emotions = replies_data.keys()
+    emotions = emoticons_data.keys()
     for emotion in emotions:
         if detected(emotion, text):
             return emotion
