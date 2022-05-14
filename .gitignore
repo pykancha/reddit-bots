@@ -134,3 +134,4 @@ dmypy.json
 .#*
 *poetry.lock
 *pyproject.toml
+*.env*
