@@ -32,13 +32,19 @@ def main():
         Lalitpur=get_lalitpur_votes(),
     ) 
     header = "source: https://election.ekantipur.com\n"
-    footer = """\n\n\n\n^^contribute:  [Bot code](https://github.com/pykancha/reddit-bots) |  [Api code](https://github.com/pykancha/election-scraper) | [Api url for your personal automation](https://g7te1m.deta.dev/)"""
+    footer = """^^contribute:  [Bot code](https://github.com/pykancha/reddit-bots) |  [Api code](https://github.com/pykancha/election-scraper) | [Api url for your personal automation](https://g7te1m.deta.dev/)"""
     footer = ""
     text = ''
     for city, data in city_data_map.items():
         text += gen_msg(city, data) if city!='Kathmandu' else gen_msg(city, data, concat_name=True)
-    print(submission.author)
-    submission.edit(body=f"{header}\n{text}\n{footer}")
+
+    submission_body = f"{header}\n{text}\n{footer}"
+
+    if submission.body.strip() == submission_body.strip():
+        print("Yes")
+    else:
+        print(submission.author)
+        submission.edit(body=submission_body)
 
     
 def gen_msg(city, data, concat_name=False):
