@@ -25,7 +25,7 @@ def login(username):
 
 def main():
     reddit = login(USERNAME)
-    submission = reddit.comment('i8lotdy')
+    submissions = [reddit.comment('i8lotdy'), reddit.submission('upo1at')]
     city_data_map = dict(
         Kathmandu=get_ktm_votes(),
         Bharatpur=get_bharatpur_votes(),
@@ -40,20 +40,22 @@ def main():
 
     submission_body = f"{header}\n{text}\n{footer}"
 
-    if submission.body.strip() == submission_body.strip():
-        print("Yes")
-    else:
-        print(submission.author)
-        submission.edit(body=submission_body)
+    for submission in submissions:
+        body = submission.selftext if not hasattr(submission, 'body') else submission.body
+        if body.strip() == submission_body.strip():
+            print("Yes")
+        else:
+            print(submission.author)
+            submission.edit(body=submission_body)
 
     
 def gen_msg(city, data, concat_name=False):
     mayor = f"# {city}\n## Mayor\n"
     get_name = lambda x: x['candidate-name'] if not concat_name else x['candidate-name'].split(' ')[0]
-    candidates = [f"- {get_name(i)} {i['vote-numbers']}" for i in data['mayor']]
+    candidates = [f"- {get_name(i)} = {i['vote-numbers']}" for i in data['mayor']]
     mayor += "\n".join(candidates)
     deputy = "## Deputy Mayor\n"
-    candidates = [f"- {i['candidate-name'].split(' ')[0]} {i['vote-numbers']}" for i in data['deputy']]
+    candidates = [f"- {i['candidate-name'].split(' ')[0]} = {i['vote-numbers']}" for i in data['deputy']]
     deputy = deputy + "\n".join(candidates) if candidates else ""
     body = f'{mayor}\n{deputy}\n' if deputy else f'{mayor}\n'
     return body
