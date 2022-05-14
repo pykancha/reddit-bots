@@ -1,9 +1,11 @@
 import os
+import time
 
 import praw
 from dotenv import load_dotenv
 
 from news import get_ktm_votes, get_lalitpur_votes, get_bharatpur_votes
+from keep_alive import keep_alive
 
 USERNAME = "election-bot-2079"
 load_dotenv()
@@ -51,4 +53,7 @@ def gen_msg(city, data, concat_name=False):
     return body
    
 if __name__ == "__main__":
-    main()
+    keep_alive()
+    while True:
+        main()
+        time.sleep(60)
