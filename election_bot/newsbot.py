@@ -4,7 +4,10 @@ import time
 import praw
 from dotenv import load_dotenv
 
-from news import get_ktm_votes, get_lalitpur_votes, get_bharatpur_votes, get_dhangadi_votes, concat_party
+from news import (
+    get_ktm_votes, get_lalitpur_votes, get_bharatpur_votes, get_dhangadi_votes,
+    get_pokhara_votes, get_biratnagar_votes, get_birgunj_votes, concat_party
+)
 from keep_alive import keep_alive
 
 USERNAME = "election-bot-2079"
@@ -30,8 +33,10 @@ def main():
         city_data_map = dict(
             Kathmandu=get_ktm_votes(),
             Bharatpur=get_bharatpur_votes(),
-            Lalitpur=get_lalitpur_votes(),
             Dhangadi=get_dhangadi_votes(),
+            Pokhara=get_pokhara_votes(),
+            Biratnagar=get_biratnagar_votes(),
+            Lalitpur=get_lalitpur_votes(),
         )
     except Exception as e:
         print("Scraper error", e)

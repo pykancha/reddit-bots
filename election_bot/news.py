@@ -14,6 +14,7 @@ def filter_data(data, filter):
            if name == 'Balendra Shah':
               data_dict['candidate-name'] = 'Balen Shah'
            results.append(data_dict)
+           continue
     return results
 
 def concat_party(partyname):
@@ -75,6 +76,44 @@ def get_lalitpur_votes():
       'mayor': mayor_dict,
       'deputy': deputy_dict,
     }
+
+def get_pokhara_votes():
+    req_url = f'{url}pokhara'
+    data = request_url(req_url)
+    mayors = ['Dhana', 'Krishna', 'Shankar', 'Khadak', 'Shushila']
+    deputy = []
+    mayor_dict = filter_data(data, mayors)
+    deputy_dict = filter_data(data, deputy)
+    return {
+      'mayor': mayor_dict,
+      'deputy': deputy_dict,
+    }
+
+def get_biratnagar_votes():
+    req_url = f'{url}biratnagar'
+    data = request_url(req_url)
+    mayors = ['Nagesh', 'Sagar', 'Umesh', 'Prahlad']
+    deputy = []
+    mayor_dict = filter_data(data, mayors)
+    deputy_dict = filter_data(data, deputy)
+    return {
+      'mayor': mayor_dict,
+      'deputy': deputy_dict,
+    }
+
+def get_birgunj_votes():
+    req_url = f'{url}birgunj'
+    data = request_url(req_url)
+    mayors = ['Rajesh', 'Bijay', 'Girish']
+    deputy = []
+    mayor_dict = filter_data(data, mayors)
+    deputy_dict = filter_data(data, deputy)
+    return {
+      'mayor': mayor_dict,
+      'deputy': deputy_dict,
+    }
+
+
 
 if __name__ == '__main__':
     from pprint import pprint
