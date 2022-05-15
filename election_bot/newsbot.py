@@ -4,7 +4,7 @@ import time
 import praw
 from dotenv import load_dotenv
 
-from news import get_ktm_votes, get_lalitpur_votes, get_bharatpur_votes
+from news import get_ktm_votes, get_lalitpur_votes, get_bharatpur_votes, get_dhangadi_votes, concat_party
 from keep_alive import keep_alive
 
 USERNAME = "election-bot-2079"
@@ -31,6 +31,7 @@ def main():
             Kathmandu=get_ktm_votes(),
             Bharatpur=get_bharatpur_votes(),
             Lalitpur=get_lalitpur_votes(),
+            Dhangadi=get_dhangadi_votes(),
         )
     except Exception as e:
         print("Scraper error", e)
@@ -58,10 +59,11 @@ def main():
 def gen_msg(city, data, concat_name=False):
     mayor = f"# {city}\n\n## Mayor\n\n"
     get_name = lambda x: x['candidate-name'] if not concat_name else x['candidate-name'].split(' ')[0]
-    candidates = [f"- {get_name(i)} = {i['vote-numbers']}" for i in data['mayor']]
+    party = lambda x: concat_party(x['candidate-party-name'])
+    candidates = [f"- {get_name(i)}  [{party(i)}]  =  {i['vote-numbers']}" for i in data['mayor']]
     mayor += "\n\n".join(candidates)
     deputy = "\n\n## Deputy Mayor\n\n"
-    candidates = [f"- {i['candidate-name'].split(' ')[0]} = {i['vote-numbers']}" for i in data['deputy']]
+    candidates = [f"- {i['candidate-name'].split(' ')[0]}  [{party(i)}]  =  {i['vote-numbers']}" for i in data['deputy']]
     deputy = deputy + "\n".join(candidates) if candidates else ""
     body = f'{mayor}\n\n{deputy}\n\n' if deputy else f'{mayor}\n\n'
     return body
@@ -70,4 +72,4 @@ if __name__ == "__main__":
     keep_alive()
     while True:
         main()
-        time.sleep(120)
+        time.sleep(60)
