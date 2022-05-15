@@ -10,7 +10,7 @@ def filter_data(data, filter):
     results = []
     for data_dict in data:
         name = data_dict['candidate-name']
-        if name.split(' ')[0] in filter:
+        if name.split(' ')[0] in filter or name.strip() in filter:
            if name == 'Balendra Shah':
               data_dict['candidate-name'] = 'Balen Shah'
            results.append(data_dict)
@@ -101,6 +101,19 @@ def get_biratnagar_votes():
       'deputy': deputy_dict,
     }
 
+def get_damak_votes():
+    req_url = f'{url}url?url=https://election.ekantipur.com/pradesh-1/district-jhapa/damak?lng=eng'
+    data = request_url(req_url)
+    mayors = ['Ram Kumar Thapa', 'Gita']
+    deputy = []
+    mayor_dict = filter_data(data, mayors)
+    deputy_dict = filter_data(data, deputy)
+    return {
+      'mayor': mayor_dict,
+      'deputy': deputy_dict,
+    }
+
+
 def get_birgunj_votes():
     req_url = f'{url}birgunj'
     data = request_url(req_url)
@@ -117,4 +130,4 @@ def get_birgunj_votes():
 
 if __name__ == '__main__':
     from pprint import pprint
-    pprint(get_ktm_votes())
+    pprint(get_damak_votes())

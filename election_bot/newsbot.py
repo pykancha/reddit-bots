@@ -6,7 +6,8 @@ from dotenv import load_dotenv
 
 from news import (
     get_ktm_votes, get_lalitpur_votes, get_bharatpur_votes, get_dhangadi_votes,
-    get_pokhara_votes, get_biratnagar_votes, get_birgunj_votes, concat_party
+    get_pokhara_votes, get_biratnagar_votes, get_birgunj_votes, concat_party,
+    get_damak_votes,
 )
 from keep_alive import keep_alive
 
@@ -33,6 +34,7 @@ def main():
         city_data_map = dict(
             Kathmandu=get_ktm_votes(),
             Bharatpur=get_bharatpur_votes(),
+            Damak=get_damak_votes(),
             Dhangadi=get_dhangadi_votes(),
             Pokhara=get_pokhara_votes(),
             Biratnagar=get_biratnagar_votes(),
@@ -44,7 +46,7 @@ def main():
         return
 
     header = "source: https://election.ekantipur.com\n"
-    news = "\n\n# News\n\n- [एमालेको विरोधपछि रोकियो भरतपुर महानगरको मतगणना](https://www.setopati.com/election/localelection/270907) [Restarted after 25 mins]"
+    news = ""
     footer = """^^contribute:  [Bot code](https://github.com/pykancha/reddit-bots) |  [Api code](https://github.com/pykancha/election-api) | [Api url for your personal automation](https://g7te1m.deta.dev/)"""
     text = ''
     for city, data in city_data_map.items():
