@@ -49,14 +49,14 @@ def main():
 
     
 def gen_msg(city, data, concat_name=False):
-    mayor = f"# {city}\n## Mayor\n"
+    mayor = f"# {city}\n\n## Mayor\n\n"
     get_name = lambda x: x['candidate-name'] if not concat_name else x['candidate-name'].split(' ')[0]
     candidates = [f"- {get_name(i)} = {i['vote-numbers']}" for i in data['mayor']]
-    mayor += "\n".join(candidates)
-    deputy = "## Deputy Mayor\n"
+    mayor += "\n\n".join(candidates)
+    deputy = "\n\n## Deputy Mayor\n\n"
     candidates = [f"- {i['candidate-name'].split(' ')[0]} = {i['vote-numbers']}" for i in data['deputy']]
     deputy = deputy + "\n".join(candidates) if candidates else ""
-    body = f'{mayor}\n{deputy}\n' if deputy else f'{mayor}\n'
+    body = f'{mayor}\n\n{deputy}\n\n' if deputy else f'{mayor}\n\n'
     return body
    
 if __name__ == "__main__":
