@@ -20,7 +20,7 @@ def filter_data(data, filter):
 def get_ktm_votes():
     req_url = f'{url}kathmandu'
     data = request_url(req_url)
-    mayors = ['Balendra', 'Keshav', 'Sirjana', 'Suman', 'Madan', 'Samiksha']
+    mayors = ['Balendra', 'Keshav', 'Shirjana', 'Suman', 'Madan', 'Samiksha']
     deputy = ['Sunita', 'Rameshwore', 'Binita']
     mayor_dict = filter_data(data, mayors)
     deputy_dict = filter_data(data, deputy)
