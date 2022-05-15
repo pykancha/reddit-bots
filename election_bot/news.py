@@ -28,6 +28,19 @@ def concat_party(partyname):
         }
     return concat_map.get(partyname, partyname)
 
+def sum_total(data):
+    total = 0
+    for data_dict in data:
+        vote_no = 0
+        if data_dict.get('vote-numbers', False):
+            try:
+                vote_no = int(data_dict.get('vote-numbers', '0'))
+            except Exception as e:            
+                print("Voter total error", e, data_dict)
+                pass
+        total += vote_no
+    return total
+
 def get_ktm_votes():
     req_url = f'{url}kathmandu'
     data = request_url(req_url)
@@ -35,9 +48,15 @@ def get_ktm_votes():
     deputy = ['Sunita', 'Rameshwore', 'Binita']
     mayor_dict = filter_data(data, mayors)
     deputy_dict = filter_data(data, deputy)
+    counted_votes = sum_total(mayor_dict)
+    total_votes = 191186
+    counted_votes += 0.1 * counted_votes
+    vote_percentage = round((counted_votes / total_votes) * 100, 2)
     return {
       'mayor': mayor_dict,
       'deputy': deputy_dict,
+      'vote_counted': int(counted_votes),
+      'percentage': vote_percentage,
     }
 
 def get_bharatpur_votes():
