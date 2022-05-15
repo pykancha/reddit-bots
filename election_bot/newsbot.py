@@ -29,7 +29,7 @@ def login(username):
 
 def main():
     reddit = login(USERNAME)
-    submissions = [reddit.comment('i8lotdy'), reddit.submission('upxo3j')]
+    submissions = [reddit.comment('i8lotdy')]#, reddit.submission('upxo3j')]
     try:
         city_data_map = dict(
             Kathmandu=get_ktm_votes(),
@@ -64,14 +64,17 @@ def main():
 
 
 def gen_msg(city, data, concat_name=False):
-    mayor = f"# {city}\n\n## Mayor\n\n"
+    mayor = f"# {city}\n\n## Mayor\n"
     get_name = lambda x: x['candidate-name'] if not concat_name else x['candidate-name'].split(' ')[0]
     party = lambda x: concat_party(x['candidate-party-name'])
-    candidates = [f"- {get_name(i)}  [{party(i)}]  =  {i['vote-numbers']}" for i in data['mayor']]
-    mayor += "\n\n".join(candidates)
-    deputy = "\n\n## Deputy Mayor\n\n"
-    candidates = [f"- {i['candidate-name'].split(' ')[0]}  [{party(i)}]  =  {i['vote-numbers']}" for i in data['deputy']]
-    deputy = deputy + "\n".join(candidates) if candidates else ""
+    vote_percent = lambda x: int(round( (int(x['vote-numbers']) / data['vote_counted']) * 100, 0))
+    header = "Candidate|Party|Votes|Percentage|\n:--:|:--:|:--:|:--:|\n"
+    candidates = [f"{get_name(i)} | {party(i)} | {i['vote-numbers']} | {vote_percent(i)}%" for i in data['mayor']]
+    mayor += header + "\n".join(candidates)
+    deputy = "\n\n## Deputy Mayor\n"
+    header = "Candidate|Party|Votes|\n:--:|:--:|:--:|\n"
+    candidates = [f"{i['candidate-name'].split(' ')[0]}|{party(i)}|{i['vote-numbers']}" for i in data['deputy']]
+    deputy = deputy + header + "\n".join(candidates) if candidates else ""
     if city == 'Kathmandu':
         extra = f"**Some Stats**\n\nTotal eligible Voters: 300,242 (64% = 191,186)\n\nVote Counted: {data['percentage']}% ({data['vote_counted']})"
         body = f'{mayor}\n\n{extra}\n\n{deputy}\n\n'
