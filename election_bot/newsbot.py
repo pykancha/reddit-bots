@@ -25,7 +25,7 @@ def login(username):
 
 def main():
     reddit = login(USERNAME)
-    submissions = [reddit.comment('i8lotdy'), reddit.submission('upo1at')]
+    submissions = [reddit.comment('i8lotdy'), reddit.submission('upxo3j')]
     city_data_map = dict(
         Kathmandu=get_ktm_votes(),
         Bharatpur=get_bharatpur_votes(),
@@ -63,4 +63,4 @@ if __name__ == "__main__":
     keep_alive()
     while True:
         main()
-        time.sleep(60)
+        time.sleep(120)
