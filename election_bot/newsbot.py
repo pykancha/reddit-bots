@@ -38,7 +38,7 @@ def main():
         return
 
     header = "source: https://election.ekantipur.com\n"
-    news = "\n\n# News\n\n- [एमालेको विरोधपछि रोकियो भरतपुर महानगरको मतगणना](https://www.setopati.com/election/localelection/270907)"
+    #news = "\n\n# News\n\n- [](https://www.setopati.com/election/localelection/270907)"
     footer = """^^contribute:  [Bot code](https://github.com/pykancha/reddit-bots) |  [Api code](https://github.com/pykancha/election-api) | [Api url for your personal automation](https://g7te1m.deta.dev/)"""
     text = ''
     for city, data in city_data_map.items():
