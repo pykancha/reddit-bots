@@ -1,0 +1,2 @@
+language = "bash"
+run = "cd election_bot && git checkout replit-deploy && git pull && python -m pip install -r requirements.txt && python newsbot.py"

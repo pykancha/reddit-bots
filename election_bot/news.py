@@ -1,6 +1,6 @@
 import requests
 
-url = "https://g7te1m.deta.dev/"
+url = "https://8xf7bb.deta.dev/"
 
 def request_url(url):
     response = requests.get(url)

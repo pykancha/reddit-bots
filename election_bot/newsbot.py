@@ -26,11 +26,17 @@ def login(username):
 def main():
     reddit = login(USERNAME)
     submissions = [reddit.comment('i8lotdy'), reddit.submission('upxo3j')]
-    city_data_map = dict(
-        Kathmandu=get_ktm_votes(),
-        Bharatpur=get_bharatpur_votes(),
-        Lalitpur=get_lalitpur_votes(),
-    ) 
+    try:
+        city_data_map = dict(
+            Kathmandu=get_ktm_votes(),
+            Bharatpur=get_bharatpur_votes(),
+            Lalitpur=get_lalitpur_votes(),
+        ) 
+    except Exception as e:
+        print("Scraper error", e)
+        time.sleep(10)
+        return
+        
     header = "source: https://election.ekantipur.com\n"
     footer = """^^contribute:  [Bot code](https://github.com/pykancha/reddit-bots) |  [Api code](https://github.com/pykancha/election-api) | [Api url for your personal automation](https://g7te1m.deta.dev/)"""
     text = ''
