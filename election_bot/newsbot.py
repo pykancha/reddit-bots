@@ -29,7 +29,7 @@ def login(username):
 
 def main():
     reddit = login(USERNAME)
-    submissions = [reddit.comment('i8lotdy')]#, reddit.submission('upxo3j')]
+    submissions = [reddit.submission('upxo3j')]#, reddit.comment('i8lotdy')]
     try:
         city_data_map = dict(
             Kathmandu=get_ktm_votes(),
