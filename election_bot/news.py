@@ -170,6 +170,20 @@ def get_hetauda_votes():
       'vote_counted': int(counted_votes),
     }
 
+def get_janakpur_votes():
+    req_url = f'{url}url?url=https://election.ekantipur.com/pradesh-2/district-dhanusha/janakpurdham?lng=eng'
+    data = request_url(req_url)
+    mayors = ["Manoj Kumar Sah Sudi", "Shiva", "Balram", "Manoj Chaudhari", "Lal", "Janaki"]
+    deputy = []
+    mayor_dict = filter_data(data, mayors)
+    deputy_dict = filter_data(data, deputy)
+    counted_votes = sum_total(mayor_dict)
+    counted_votes += 0.1 * counted_votes
+    return {
+      'mayor': mayor_dict,
+      'deputy': deputy_dict,
+      'vote_counted': int(counted_votes),
+    }
 
 def get_birgunj_votes():
     req_url = f'{url}birgunj'
@@ -189,4 +203,5 @@ def get_birgunj_votes():
 
 if __name__ == '__main__':
     from pprint import pprint
+    #pprint(get_janakpur_votes())
     pprint(get_birgunj_votes())
