@@ -46,7 +46,7 @@ def sum_total(data):
 def get_ktm_votes():
     req_url = f'{url}kathmandu'
     data = request_url(req_url)
-    mayors = ['Balendra', 'Keshav', 'Shirjana', 'Suman', 'Madan', 'Samiksha']
+    mayors = ['Balendra', 'Keshav', 'Shirjana', 'Suman', 'Madan', 'Samiksha', "Ram"]
     deputy = []#['Sunita', 'Rameshwore', 'Binita']
     mayor_dict = filter_data(data, mayors)
     deputy_dict = filter_data(data, deputy)
@@ -55,7 +55,7 @@ def get_ktm_votes():
     total_votes = 1_91_186
     vote_percentage = round((counted_votes / total_votes) * 100, 2)
     return {
-      'mayor': mayor_dict,
+      'mayor': mayor_dict[:-1],
       'deputy': deputy_dict,
       'vote_counted': int(counted_votes),
       'percentage': vote_percentage,
@@ -65,26 +65,30 @@ def get_ktm_votes():
 def get_bharatpur_votes():
     req_url = f'{url}bharatpur'
     data = request_url(req_url)
-    mayors = ['Renu', 'Vijay', 'Jaggannath', 'Prabin', 'Yog']
+    mayors = ['Renu', 'Vijay', 'Jaggannath', 'Prabin', 'Yog', "Purna", "Ganes", "Surya", "Vinod", "Yam", "Khem", "Surendra"]
     deputy = []
-    mayor_dict = filter_data(data, mayors[:-2])
+    mayor_dict = filter_data(data, mayors[:3])
     deputy_dict = filter_data(data, deputy)
     counted_votes = sum_total(filter_data(data, mayors))
     counted_votes += 0.1 * counted_votes
+    total_votes = 1_27_000
+    vote_percentage = round((counted_votes / total_votes) * 100, 2)
     return {
       'mayor': mayor_dict,
       'deputy': deputy_dict,
       'vote_counted': int(counted_votes),
+      'percentage': vote_percentage,
+      'total_votes': total_votes,
     }
 
 def get_dhangadi_votes():
     req_url = f'{url}dhangadi'
     data = request_url(req_url)
-    mayors = ['Gopal', 'Nripa', 'Ran']
+    mayors = ['Gopal', 'Nripa', 'Ran', "Kabindra", "Basanta"]
     deputy = []#['Shanti', 'Prabhakar', 'Kandakala']
-    mayor_dict = filter_data(data, mayors)
+    mayor_dict = filter_data(data, mayors[:3])
     deputy_dict = filter_data(data, deputy)
-    counted_votes = sum_total(mayor_dict)
+    counted_votes = sum_total(filter_data(data, mayors))
     counted_votes += 0.1 * counted_votes
 
     return {
@@ -97,58 +101,70 @@ def get_dhangadi_votes():
 def get_lalitpur_votes():
     req_url = f'{url}lalitpur'
     data = request_url(req_url)
-    mayors = ['Chiri', 'Hari', 'Asta']
+    mayors = ['Chiri', 'Hari', 'Asta', "Ujjwal"]
     deputy = []
-    mayor_dict = filter_data(data, mayors[:-1])
+    mayor_dict = filter_data(data, mayors[:2])
     deputy_dict = filter_data(data, deputy)
     counted_votes = sum_total(filter_data(data, mayors))
     counted_votes += 0.1 * counted_votes
-
+    total_votes = 83_540
+    vote_percentage = round((counted_votes / total_votes) * 100, 2)
     return {
       'mayor': mayor_dict,
       'deputy': deputy_dict,
       'vote_counted': int(counted_votes),
+      'percentage': vote_percentage,
+      'total_votes': total_votes,
     }
 
 def get_pokhara_votes():
     req_url = f'{url}pokhara'
     data = request_url(req_url)
-    mayors = ['Dhana', 'Krishna', 'Shankar', 'Khadak', 'Shushila']
+    mayors = ['Dhana', 'Krishna', 'Shankar', 'Khadak', 'Shusila']
     deputy = []
-    mayor_dict = filter_data(data, mayors)
+    mayor_dict = filter_data(data, mayors[:-1])
     deputy_dict = filter_data(data, deputy)
-    counted_votes = sum_total(mayor_dict)
+    counted_votes = sum_total(filter_data(data, mayors))
     counted_votes += 0.1 * counted_votes
+    total_votes = 1_43_226
+    vote_percentage = round((counted_votes / total_votes) * 100, 2)
 
     return {
       'mayor': mayor_dict,
       'deputy': deputy_dict,
       'vote_counted': int(counted_votes),
-    }
+      'percentage': vote_percentage,
+      'total_votes': total_votes,
+   }
 
 def get_biratnagar_votes():
     req_url = f'{url}biratnagar'
     data = request_url(req_url)
     mayors = ['Nagesh', 'Sagar', 'Umesh', 'Prahlad']
     deputy = []
-    mayor_dict = filter_data(data, mayors)
+    mayor_dict = filter_data(data, mayors[:-1])
     deputy_dict = filter_data(data, deputy)
-    counted_votes = sum_total(mayor_dict)
+    counted_votes = sum_total(filter_data(data, mayors))
     counted_votes += 0.1 * counted_votes
+    total_votes = 89_678
+    vote_percentage = round((counted_votes / total_votes) * 100, 2)
+
     return {
       'mayor': mayor_dict,
       'deputy': deputy_dict,
       'vote_counted': int(counted_votes),
-    }
+      'percentage': vote_percentage,
+      'total_votes': total_votes,
+   }
 
 def get_damak_votes():
     req_url = f'{url}url?url=https://election.ekantipur.com/pradesh-1/district-jhapa/damak?lng=eng'
     data = request_url(req_url)
-    mayors = ['Ram Kumar Thapa', 'Gita']
+    mayors = ['Ram Kumar Thapa', 'Gita', "Dipesh Kumar Rai", "Pawan Bista"]
     deputy = []
-    mayor_dict = filter_data(data, mayors)
+    mayor_dict = filter_data(data, mayors[:2])
     deputy_dict = filter_data(data, deputy)
-    counted_votes = sum_total(mayor_dict)
+    counted_votes = sum_total(filter_data(data, mayors))
     counted_votes += 0.1 * counted_votes
     return {
       'mayor': mayor_dict,
@@ -159,11 +175,11 @@ def get_damak_votes():
 def get_hetauda_votes():
     req_url = f'{url}url?url=https://election.ekantipur.com/pradesh-3/district-makwanpur/hetauda?lng=eng'
     data = request_url(req_url)
-    mayors = ["Meena", 'Dipak', "Ananta"]
+    mayors = ["Meena", 'Dipak', "Ananta", "Sanjiv Khanal"]
     deputy = []
-    mayor_dict = filter_data(data, mayors)
+    mayor_dict = filter_data(data, mayors[:-1])
     deputy_dict = filter_data(data, deputy)
-    counted_votes = sum_total(mayor_dict)
+    counted_votes = sum_total(filter_data(data, mayors))
     counted_votes += 0.1 * counted_votes
     return {
       'mayor': mayor_dict,
@@ -174,11 +190,11 @@ def get_hetauda_votes():
 def get_janakpur_votes():
     req_url = f'{url}url?url=https://election.ekantipur.com/pradesh-2/district-dhanusha/janakpurdham?lng=eng'
     data = request_url(req_url)
-    mayors = ["Manoj Kumar Sah Sudi", "Shiva", "Balram", "Manoj Chaudhari", "Lal", "Janaki"]
+    mayors = ["Manoj Kumar Sah Sudi", "Shiva", "Balram", "Manoj Chaudhari", "Lal", "Janaki", "Kisa"]
     deputy = []
-    mayor_dict = filter_data(data, mayors)
+    mayor_dict = filter_data(data, mayors[:2])
     deputy_dict = filter_data(data, deputy)
-    counted_votes = sum_total(mayor_dict)
+    counted_votes = sum_total(filter_data(data, mayors))
     counted_votes += 0.1 * counted_votes
     return {
       'mayor': mayor_dict,
@@ -193,16 +209,19 @@ def get_birgunj_votes():
     deputy = []
     mayor_dict = filter_data(data, mayors)
     deputy_dict = filter_data(data, deputy)
-    counted_votes = sum_total(mayor_dict)
+    counted_votes = sum_total(filter_data(data, mayors))
     counted_votes += 0.1 * counted_votes
+    total_votes = 93_236
+    vote_percentage = round((counted_votes / total_votes) * 100, 2)
     return {
       'mayor': mayor_dict,
       'deputy': deputy_dict,
       'vote_counted': int(counted_votes),
+      'percentage': vote_percentage,
+      'total_votes': total_votes,
     }
-
 
 if __name__ == '__main__':
     from pprint import pprint
     #pprint(get_janakpur_votes())
-    pprint(get_birgunj_votes())
+    pprint(get_ktm_votes())

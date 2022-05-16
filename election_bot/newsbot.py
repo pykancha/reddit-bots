@@ -29,7 +29,8 @@ def login(username):
 
 def main():
     reddit = login(USERNAME)
-    submissions = [reddit.submission('upxo3j')]#, reddit.comment('i8lotdy')]
+    submissions = [reddit.comment('i8lotdy')]
+    submissions = [reddit.submission('upxo3j')]
     try:
         city_data_map = dict(
             Kathmandu=get_ktm_votes(),
@@ -47,14 +48,13 @@ def main():
         time.sleep(10)
         return
 
-    header = "source: https://election.ekantipur.com\n"
-    news = ""
-    footer = """^^contribute:  [Bot code](https://github.com/pykancha/reddit-bots) |  [Api code](https://github.com/pykancha/election-api) | [Api url for your personal automation](https://g7te1m.deta.dev/)"""
+    news = "# News of Interest\n- [A Look at Balen's Core team and their strategic planning for KTM mayoral election](https://shilapatra.com/detail/85494) ([Reddit discussion](https://www.reddit.com/r/Nepal/comments/uqe55n/team_balen_4_people_involved_in_his_campaign/))\n\n"
+    footer = """\n\n**Election Data Source**: https://election.ekantipur.com\n\n*contribute*:  [Bot code](https://github.com/pykancha/reddit-bots) |  [Api code](https://github.com/pykancha/election-api) | [Api url for your personal automation](https://g7te1m.deta.dev/)"""
     text = ''
     for city, data in city_data_map.items():
         text += gen_msg(city, data) if city!='Kathmandu' else gen_msg(city, data, concat_name=True)
 
-    submission_body = f"{header}\n{text}\n{news}\n\n{footer}"
+    submission_body = f"{text}\n{news}\n\n{footer}"
 
     for submission in submissions:
         body = submission.selftext if not hasattr(submission, 'body') else submission.body
@@ -66,19 +66,30 @@ def main():
 
 
 def gen_msg(city, data, concat_name=False):
-    mayor = f"# {city}\n\n## Mayor\n"
+    mayor = f"# {city}\n## Mayor\n"
+    if city != 'Kathmandu' and data.get('total_votes', 0) and data.get('percentage', 0):
+        extra = f"- Vote Counted: {data['percentage']}% ({data['vote_counted']:,} of {data['total_votes']:,})"
+        mayor = f"# {city}\n{extra}\n\n## Mayor\n"
+
+    # Utils functions
     get_name = lambda x: x['candidate-name'] if not concat_name else x['candidate-name'].split(' ')[0]
     party = lambda x: concat_party(x['candidate-party-name'])
     vote_percent = lambda x: int(round( (int(x['vote-numbers']) / data['vote_counted']) * 100, 0))
+
+    # Mayor format
     header = "Candidate|Party|Votes|Percentage|\n:--:|:--:|:--:|:--:|\n"
     candidates = [f"{get_name(i)} | {party(i)} | {i['vote-numbers']} | {vote_percent(i)}%" for i in data['mayor']]
     mayor += header + "\n".join(candidates)
+
+    # Deputy Format
     deputy = "\n\n## Deputy Mayor\n"
     header = "Candidate|Party|Votes|\n:--:|:--:|:--:|\n"
     candidates = [f"{i['candidate-name'].split(' ')[0]}|{party(i)}|{i['vote-numbers']}" for i in data['deputy']]
     deputy = deputy + header + "\n".join(candidates) if candidates else ""
+
+    # Vote stats
     if city == 'Kathmandu':
-        extra = f"**Some Stats**\n\nTotal eligible Voters: 300,242 (64% = {data['total_votes']:,})\n\nVote Counted: {data['percentage']}% ({data['vote_counted']:,})"
+        extra = f"**Some Stats**\n\n- Total eligible Voters: 300,242 (64% = {data['total_votes']:,})\n- Vote Counted: {data['percentage']}% ({data['vote_counted']:,})"
         body = f'{mayor}\n\n{extra}\n\n{deputy}\n\n'
     else:
         body = f'{mayor}\n\n{deputy}\n\n' if deputy else f'{mayor}\n\n'
