@@ -48,14 +48,14 @@ def main():
         time.sleep(10)
         return
 
-    source = "\n\n **Election Data Source**: https://election.ekantipur.com"
+    source = "**Election Data Source**: https://election.ekantipur.com"
     news = ("# News of Interest\n"
            "- [A Look at Balen's Core team and their strategic planning for KTM mayoral election]"
                 "(https://shilapatra.com/detail/85494)"
               "([Reddit discussion]"
                 "(https://www.reddit.com/r/Nepal/comments/uqe55n/team_balen_4_people_involved_in_his_campaign/))\n\n\n\n"
     )
-    footer = ("\n\n *contribute*: "
+    footer = ("*contribute*: "
              "[Bot code](https://github.com/pykancha/reddit-bots) |"
              "[Api code](https://github.com/pykancha/election-api) |"
              "[Api url for your personal automation](https://g7te1m.deta.dev/) "
@@ -65,7 +65,8 @@ def main():
         text += gen_msg(city, data) if city!='Kathmandu' else gen_msg(city, data, concat_name=True)
         time.sleep(2)
 
-    submission_body = f"{text}\n\n\n\n{source}\n\n{news}\n\n{footer}"
+    submission_body = f"{source}\n\n{text}\n\n{news}\n\n\n\n{footer}"
+
     for submission in submissions:
         body = submission.selftext if not hasattr(submission, 'body') else submission.body
         if body.strip() == submission_body.strip():
@@ -80,11 +81,11 @@ def gen_msg(city, data, concat_name=False):
     voter_stat = ''
     if city == 'Kathmandu':
         voter_stat = (
-                f"- Total eligible Voters: 300,242 (64% = {data['total_votes']:,})\n"
-                 f"- Vote Counted: {data['percentage']}% ({data['vote_counted']:,})"
+                f"- **Total eligible Voters**: 300,242 (64% = {data['total_votes']:,})\n"
+                 f"- **Vote Counted**: {data['percentage']}% ({data['vote_counted']:,})"
         )
     elif data.get('total_votes', 0) and data.get('percentage', 0):
-        voter_stat = f"- Vote Counted: {data['percentage']}% ({data['vote_counted']:,} of {data['total_votes']:,})"
+        voter_stat = f"- **Vote Counted**: {data['percentage']}% ({data['vote_counted']:,} of {data['total_votes']:,})"
     metadata = f"# {city}\n{voter_stat}\n\n"
 
     # Utils functions
