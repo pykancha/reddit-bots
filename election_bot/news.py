@@ -13,6 +13,8 @@ def filter_data(data, filter):
         if name.split(' ')[0] in filter or name.strip() in filter:
            if name == 'Balendra Shah':
               data_dict['candidate-name'] = 'Balen Shah'
+           if name == 'Khadak Raj Poudel':
+              data_dict['candidate-name'] += ' (Ganess)'
            results.append(data_dict)
            continue
     return results
@@ -45,7 +47,7 @@ def get_ktm_votes():
     req_url = f'{url}kathmandu'
     data = request_url(req_url)
     mayors = ['Balendra', 'Keshav', 'Shirjana', 'Suman', 'Madan', 'Samiksha']
-    deputy = ['Sunita', 'Rameshwore', 'Binita']
+    deputy = []#['Sunita', 'Rameshwore', 'Binita']
     mayor_dict = filter_data(data, mayors)
     deputy_dict = filter_data(data, deputy)
     counted_votes = sum_total(mayor_dict)
@@ -78,7 +80,7 @@ def get_dhangadi_votes():
     req_url = f'{url}dhangadi'
     data = request_url(req_url)
     mayors = ['Gopal', 'Nripa', 'Ran']
-    deputy = ['Shanti', 'Prabhakar', 'Kandakala']
+    deputy = []#['Shanti', 'Prabhakar', 'Kandakala']
     mayor_dict = filter_data(data, mayors)
     deputy_dict = filter_data(data, deputy)
     counted_votes = sum_total(mayor_dict)
@@ -142,6 +144,21 @@ def get_damak_votes():
     req_url = f'{url}url?url=https://election.ekantipur.com/pradesh-1/district-jhapa/damak?lng=eng'
     data = request_url(req_url)
     mayors = ['Ram Kumar Thapa', 'Gita']
+    deputy = []
+    mayor_dict = filter_data(data, mayors)
+    deputy_dict = filter_data(data, deputy)
+    counted_votes = sum_total(mayor_dict)
+    counted_votes += 0.1 * counted_votes
+    return {
+      'mayor': mayor_dict,
+      'deputy': deputy_dict,
+      'vote_counted': int(counted_votes),
+    }
+
+def get_hetauda_votes():
+    req_url = f'{url}url?url=https://election.ekantipur.com/pradesh-3/district-makwanpur/hetauda?lng=eng'
+    data = request_url(req_url)
+    mayors = ["Meena", 'Dipak', "Ananta"]
     deputy = []
     mayor_dict = filter_data(data, mayors)
     deputy_dict = filter_data(data, deputy)
