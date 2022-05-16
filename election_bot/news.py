@@ -89,12 +89,16 @@ def get_dhangadi_votes():
     mayor_dict = filter_data(data, mayors[:3])
     deputy_dict = filter_data(data, deputy)
     counted_votes = sum_total(filter_data(data, mayors))
-    counted_votes += 0.1 * counted_votes
+    counted_votes += 0.18 * counted_votes
+    total_votes = 53_181
+    vote_percentage = round((counted_votes / total_votes) * 100, 2)
 
     return {
       'mayor': mayor_dict,
       'deputy': deputy_dict,
       'vote_counted': int(counted_votes),
+      'percentage': vote_percentage,
+      'total_votes': total_votes,
     }
 
 
@@ -166,10 +170,15 @@ def get_damak_votes():
     deputy_dict = filter_data(data, deputy)
     counted_votes = sum_total(filter_data(data, mayors))
     counted_votes += 0.1 * counted_votes
+    total_votes = 39_949
+    vote_percentage = round((counted_votes / total_votes) * 100, 2)
+
     return {
       'mayor': mayor_dict,
       'deputy': deputy_dict,
       'vote_counted': int(counted_votes),
+      'percentage': vote_percentage,
+      'total_votes': total_votes,
     }
 
 def get_hetauda_votes():
@@ -180,11 +189,16 @@ def get_hetauda_votes():
     mayor_dict = filter_data(data, mayors[:-1])
     deputy_dict = filter_data(data, deputy)
     counted_votes = sum_total(filter_data(data, mayors))
-    counted_votes += 0.1 * counted_votes
+    counted_votes += 0.15 * counted_votes
+    total_votes = 74_185
+    vote_percentage = round((counted_votes / total_votes) * 100, 2)
+
     return {
       'mayor': mayor_dict,
       'deputy': deputy_dict,
       'vote_counted': int(counted_votes),
+      'percentage': vote_percentage,
+      'total_votes': total_votes,
     }
 
 def get_janakpur_votes():
