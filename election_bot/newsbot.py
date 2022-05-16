@@ -31,24 +31,19 @@ def main():
     reddit = login(USERNAME)
     submissions = [reddit.comment('i8lotdy')]
     submissions = [reddit.submission('upxo3j')]
-    try:
-        city_data_map = dict(
-            Kathmandu=get_ktm_votes,
-            Bharatpur=get_bharatpur_votes,
-            Hetauda=get_hetauda_votes,
-            Damak=get_damak_votes,
-            Janakpur=get_janakpur_votes,
-            Dhangadi=get_dhangadi_votes,
-            Pokhara=get_pokhara_votes,
-            Biratnagar=get_biratnagar_votes,
-            Lalitpur=get_lalitpur_votes,
-        )
-    except Exception as e:
-        print("Scraper error", e)
-        time.sleep(10)
-        return
+    city_data_map = dict(
+        Kathmandu=get_ktm_votes,
+        Bharatpur=get_bharatpur_votes,
+        Hetauda=get_hetauda_votes,
+        Damak=get_damak_votes,
+        Janakpur=get_janakpur_votes,
+        Dhangadi=get_dhangadi_votes,
+        Pokhara=get_pokhara_votes,
+        Biratnagar=get_biratnagar_votes,
+        Lalitpur=get_lalitpur_votes,
+    )
 
-    source = "**Election Data Source**: https://election.ekantipur.com"
+    source = "**Election Data Source**: https://election.ekantipur.com?lng=eng"
     news = ("# News of Interest\n"
            "- [A Look at Balen's Core team and their strategic planning for KTM mayoral election]"
                 "(https://shilapatra.com/detail/85494)"
@@ -63,7 +58,7 @@ def main():
     text = ''
     for city, data in city_data_map.items():
         text += gen_msg(city, data) if city!='Kathmandu' else gen_msg(city, data, concat_name=True)
-        time.sleep(2)
+        time.sleep(3)
 
     submission_body = f"{source}\n\n{text}\n\n{news}\n\n\n\n{footer}"
 
@@ -77,7 +72,13 @@ def main():
 
 
 def gen_msg(city, data, concat_name=False):
-    data = data()
+    try:
+        data = data()
+    except Exception as e:
+        print("Scraper error", e)
+        time.sleep(5)
+        data = data()
+
     voter_stat = ''
     if city == 'Kathmandu':
         voter_stat = (
