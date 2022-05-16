@@ -48,12 +48,17 @@ def main():
            "- [A Look at Balen's Core team and their strategic planning for KTM mayoral election]"
                 "(https://shilapatra.com/detail/85494)"
               "([Reddit discussion]"
-                "(https://www.reddit.com/r/Nepal/comments/uqe55n/team_balen_4_people_involved_in_his_campaign/))\n\n\n\n"
+                "(https://www.reddit.com/r/Nepal/comments/uqe55n/team_balen_4_people_involved_in_his_campaign/))\n\n"
+
+           "- [Setopati Analysis of Core kathmandu Votes: Game Over, Sthapit and Singh will fight for second spot]"
+           "(https://en.setopati.com/political/158516)"
+
+           "\n\n\n\n"
     )
     footer = ("*contribute*: "
              "[Bot code](https://github.com/pykancha/reddit-bots) |"
              "[Api code](https://github.com/pykancha/election-api) |"
-             "[Api url for your personal automation](https://g7te1m.deta.dev/) "
+             "[Api url for your personal automation](https://g7te1m.deta.dev/)"
     )
     text = ''
     for city, data in city_data_map.items():
