@@ -78,7 +78,7 @@ def gen_msg(city, data, concat_name=False):
     candidates = [f"{i['candidate-name'].split(' ')[0]}|{party(i)}|{i['vote-numbers']}" for i in data['deputy']]
     deputy = deputy + header + "\n".join(candidates) if candidates else ""
     if city == 'Kathmandu':
-        extra = f"**Some Stats**\n\nTotal eligible Voters: 300,242 (64% = 191,186)\n\nVote Counted: {data['percentage']}% ({data['vote_counted']})"
+        extra = f"**Some Stats**\n\nTotal eligible Voters: 300,242 (64% = {data['total_votes']:,})\n\nVote Counted: {data['percentage']}% ({data['vote_counted']:,})"
         body = f'{mayor}\n\n{extra}\n\n{deputy}\n\n'
     else:
         body = f'{mayor}\n\n{deputy}\n\n' if deputy else f'{mayor}\n\n'
