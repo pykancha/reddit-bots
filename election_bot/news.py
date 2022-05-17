@@ -15,6 +15,8 @@ def filter_data(data, filter):
               data_dict['candidate-name'] = 'Balen Shah'
            if name == 'Khadak Raj Poudel':
               data_dict['candidate-name'] += ' (Ganess)'
+           if name == 'Harka Raj Rai':
+              data_dict['candidate-name'] += ' (Sampang)'
            results.append(data_dict)
            continue
     return results
@@ -216,6 +218,26 @@ def get_janakpur_votes():
       'vote_counted': int(counted_votes),
     }
 
+def get_dharan_votes():
+    req_url = f'{url}url?url=https://election.ekantipur.com/pradesh-1/district-sunsari/dharan?lng=eng'
+    data = request_url(req_url)
+    mayors = ["Kishore Rai", "Harka Raj Rai", "Manju Bhandari Subedi", "Naresh", "Tajub", "Raj Kumar Rai"]
+    deputy = []
+    mayor_dict = filter_data(data[:-10], mayors[:3])
+    deputy_dict = filter_data(data, deputy)
+    counted_votes = sum_total(filter_data(data, mayors))
+    counted_votes += 0.2 * counted_votes
+    total_votes = 62_897
+    vote_percentage = round((counted_votes / total_votes) * 100, 2)
+
+    return {
+      'mayor': mayor_dict,
+      'deputy': deputy_dict,
+      'vote_counted': int(counted_votes),
+      'percentage': vote_percentage,
+      'total_votes': total_votes,
+    }
+
 def get_birgunj_votes():
     req_url = f'{url}birgunj'
     data = request_url(req_url)
@@ -238,4 +260,4 @@ def get_birgunj_votes():
 if __name__ == '__main__':
     from pprint import pprint
     #pprint(get_janakpur_votes())
-    pprint(get_ktm_votes())
+    pprint(get_dharan_votes())

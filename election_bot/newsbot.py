@@ -8,7 +8,7 @@ from dotenv import load_dotenv
 from news import (
     get_ktm_votes, get_lalitpur_votes, get_bharatpur_votes, get_dhangadi_votes,
     get_pokhara_votes, get_biratnagar_votes, get_birgunj_votes, concat_party,
-    get_damak_votes,get_hetauda_votes, get_janakpur_votes,
+    get_damak_votes,get_hetauda_votes, get_janakpur_votes, get_dharan_votes
 )
 
 from keep_alive import keep_alive
@@ -39,6 +39,7 @@ def main():
         Bharatpur=get_bharatpur_votes,
         Hetauda=get_hetauda_votes,
         Damak=get_damak_votes,
+        Dharan=get_dharan_votes,
         Janakpur=get_janakpur_votes,
         Dhangadi=get_dhangadi_votes,
         Pokhara=get_pokhara_votes,
@@ -70,7 +71,7 @@ def main():
         except Exception as e:
             print("Failed generating text, Skipping this time", e, city)
             return
-        time.sleep(3)
+        time.sleep(1)
 
     submission_body = f"{source}\n\n{text}\n\n{news}\n\n\n\n{footer}"
 
