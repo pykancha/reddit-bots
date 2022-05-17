@@ -126,10 +126,10 @@ def gen_msg(city, data, concat_name=False):
         if index == 0:
             try:
                 second_candidate_votes = int(data['mayor'][1]['vote-numbers'])
-                vote_diff = f"  (+ {int(d['vote-numbers']) - second_candidate_votes}) "
+                vote_diff = f"  (+ {(int(d['vote-numbers']) - second_candidate_votes):,}) "
             except Exception as e:
                 print("Vote diff calc error", e, d['candidate-name'])
-        candidates.append(f"{get_name(d)} | {party(d)} | {d['vote-numbers']:,}{vote_diff} | {vote_percent(d)}%")
+        candidates.append(f"{get_name(d)} | {party(d)} | {int(d['vote-numbers']):,}{vote_diff} | {vote_percent(d)}%")
 
     mayor = metadata + header + "\n".join(candidates)
     mayor = f"{mayor}\n{footer}" if footer else mayor
@@ -137,7 +137,7 @@ def gen_msg(city, data, concat_name=False):
     # Deputy Format
     deputy = "\n\n## Deputy Mayor\n"
     header = "Candidate|Party|Votes|\n:--:|:--:|:--:|\n"
-    candidates = [f"{i['candidate-name'].split(' ')[0]}|{party(i)}|{i['vote-numbers']:,}" for i in data['deputy']]
+    candidates = [f"{i['candidate-name'].split(' ')[0]}|{party(i)}|{int(i['vote-numbers']):,}" for i in data['deputy']]
     deputy = deputy + header + "\n".join(candidates) if candidates else ""
 
     body = f'{mayor}\n\n{deputy}\n\n' if deputy else f'{mayor}\n\n'
