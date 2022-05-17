@@ -2,16 +2,19 @@ import os
 import time
 
 import praw
+import requests
 from dotenv import load_dotenv
 
 from news import (
     get_ktm_votes, get_lalitpur_votes, get_bharatpur_votes, get_dhangadi_votes,
     get_pokhara_votes, get_biratnagar_votes, get_birgunj_votes, concat_party,
-    get_damak_votes,get_hetauda_votes, get_janakpur_votes
+    get_damak_votes,get_hetauda_votes, get_janakpur_votes,
 )
+
 from keep_alive import keep_alive
 
 USERNAME = "election-bot-2079"
+GRAPH_URL = "https://electionupdate.herokuapp.com"
 load_dotenv()
 
 def login(username):
@@ -57,12 +60,16 @@ def main():
     )
     footer = ("*contribute*: "
              "[Bot code](https://github.com/pykancha/reddit-bots) |"
-             "[Api code](https://github.com/pykancha/election-api) |"
-             "[Api url for your personal automation](https://g7te1m.deta.dev/)"
+             "[API code](https://github.com/pykancha/election-api) |"
+             "[API url for your personal automation](https://g7te1m.deta.dev/)"
     )
     text = ''
     for city, data in city_data_map.items():
-        text += gen_msg(city, data) if city!='Kathmandu' else gen_msg(city, data, concat_name=True)
+        try:
+            text += gen_msg(city, data) if city!='Kathmandu' else gen_msg(city, data, concat_name=True)
+        except Exception as e:
+            print("Failed generating text, Skipping this time", e, city)
+            return
         time.sleep(3)
 
     submission_body = f"{source}\n\n{text}\n\n{news}\n\n\n\n{footer}"
@@ -72,8 +79,15 @@ def main():
         if body.strip() == submission_body.strip():
             print("Yes")
         else:
+            try:
+                requests.get(GRAPH_URL)
+            except Exception as e:
+                print("Graph url cannot accessed skipping", e)
             print(submission.author)
-            submission.edit(body=submission_body)
+            try:
+                submission.edit(body=submission_body)
+            except Exception as e:
+                print("Praw submit error Skipping this time..", e)
 
 
 def gen_msg(city, data, concat_name=False):
@@ -87,21 +101,32 @@ def gen_msg(city, data, concat_name=False):
     voter_stat = ''
     if city == 'Kathmandu':
         voter_stat = (
-                f"- **Total eligible Voters**: 300,242 (64% = {data['total_votes']:,})\n"
-                 f"- **Vote Counted**: {data['percentage']}% ({data['vote_counted']:,})"
+                f"- **Total eligible voters**: 300,242 (64% = {data['total_votes']:,})\n"
+                 f"- **Vote counted**: {data['percentage']}% ({data['vote_counted']:,})\n"
+                f"- [Lead Gap Visualization By u/time_chemist_8566]({GRAPH_URL}/api/v1/image) "
         )
     elif data.get('total_votes', 0) and data.get('percentage', 0):
-        voter_stat = f"- **Vote Counted**: {data['percentage']}% ({data['vote_counted']:,} of {data['total_votes']:,})"
+        voter_stat = f"- **Vote counted**: {data['percentage']}% ({data['vote_counted']:,} of {data['total_votes']:,})"
     metadata = f"# {city}\n{voter_stat}\n\n"
 
     # Utils functions
     get_name = lambda x: x['candidate-name'] if not concat_name else x['candidate-name'].split(' ')[0]
     party = lambda x: concat_party(x['candidate-party-name'])
-    vote_percent = lambda x: int(round( (int(x['vote-numbers']) / data['vote_counted']) * 100, 0))
+    vote_percent = lambda x: round( (int(x['vote-numbers']) / data['vote_counted']) * 100, 1)
 
     # Mayor format
     header = "Candidate|Party|Votes|Percentage|\n:--:|:--:|:--:|:--:|\n"
-    candidates = [f"{get_name(i)} | {party(i)} | {i['vote-numbers']} | {vote_percent(i)}%" for i in data['mayor']]
+    candidates = []
+    for index, d in enumerate(data['mayor']):
+        vote_diff = ''
+        if index == 0:
+            try:
+                second_candidate_votes = int(data['mayor'][1]['vote-numbers'])
+                vote_diff = f"  (+ {int(d['vote-numbers']) - second_candidate_votes}) "
+            except Exception as e:
+                print("Vote diff calc error", e, d['candidate-name'])
+        candidates.append(f"{get_name(d)} | {party(d)} | {d['vote-numbers']}{vote_diff} | {vote_percent(d)}%")
+
     mayor = metadata + header + "\n".join(candidates)
 
     # Deputy Format
