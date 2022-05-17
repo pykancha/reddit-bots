@@ -103,7 +103,7 @@ def gen_msg(city, data, concat_name=False):
         voter_stat = (
                 f"- **Total eligible voters**: 300,242 (64% = {data['total_votes']:,})\n"
                  f"- **Vote counted**: {data['percentage']}% ({data['vote_counted']:,})\n"
-                f"- [Lead Gap Visualization By u/time_chemist_8566]({GRAPH_URL}/api/v1/image) "
+                f"- [Lead Gap Visualization By u/time_chemist_8566]({GRAPH_URL}) "
         )
     elif data.get('total_votes', 0) and data.get('percentage', 0):
         voter_stat = f"- **Vote counted**: {data['percentage']}% ({data['vote_counted']:,} of {data['total_votes']:,})"
