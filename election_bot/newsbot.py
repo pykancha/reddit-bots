@@ -99,11 +99,15 @@ def gen_msg(city, data, concat_name=False):
         data = data()
 
     voter_stat = ''
+    footer = ''
     if city == 'Kathmandu':
         voter_stat = (
                 f"- **Total eligible voters**: 300,242 (64% = {data['total_votes']:,})\n"
-                 f"- **Vote counted**: {data['percentage']}% ({data['vote_counted']:,})\n"
-                f"- [Lead Gap Visualization By u/time_chemist_8566]({GRAPH_URL}) "
+                f"- **Vote counted**: {data['percentage']}% ({data['vote_counted']:,})\n"
+        )
+        footer = (
+                f"- [Lead Gap Visualization By u/time_chemist_8566]({GRAPH_URL})\n"
+                f"- [CSV/Excel data dump of KTM mayor election updates](https://g7te1m.deta.dev/data/)"
         )
     elif data.get('total_votes', 0) and data.get('percentage', 0):
         voter_stat = f"- **Vote counted**: {data['percentage']}% ({data['vote_counted']:,} of {data['total_votes']:,})"
@@ -128,6 +132,7 @@ def gen_msg(city, data, concat_name=False):
         candidates.append(f"{get_name(d)} | {party(d)} | {d['vote-numbers']}{vote_diff} | {vote_percent(d)}%")
 
     mayor = metadata + header + "\n".join(candidates)
+    mayor = f"{mayor}\n{footer}" if footer else mayor
 
     # Deputy Format
     deputy = "\n\n## Deputy Mayor\n"
