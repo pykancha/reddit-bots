@@ -88,7 +88,7 @@ def main():
 
     if cached_submission == submission_body:
         print("Cached matched: No new updates")
-        #return
+        return
 
     print("Cached unmatched: Updating")
     # IMP: Write to cache before inserting timestamp for next time comparision
