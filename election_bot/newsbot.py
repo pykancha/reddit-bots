@@ -137,6 +137,7 @@ def gen_msg(city, data, concat_name=False):
                 f"- **Vote counted**: {data['percentage']}% ({data['vote_counted']:,})\n"
         )
         footer = (
+                f"- Ward wise mayor votes [Live Gdocs Link](https://docs.google.com/spreadsheets/d/1xryvWM5TuvY9sEobJa4zHYuifp3hlLnlQtt-PD8042g/edit?usp=sharing) (dm me for contributing)\n"
                 f"- [Lead Gap Visualization By u/time_chemist_8566]({GRAPH_URL})\n"
                 f"- [CSV/Excel data dump of KTM mayor election updates](https://g7te1m.deta.dev/data/)"
         )
