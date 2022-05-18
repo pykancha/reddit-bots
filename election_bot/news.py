@@ -1,3 +1,4 @@
+import datetime
 import requests
 
 url = "https://8xf7bb.deta.dev/"
@@ -280,6 +281,13 @@ def get_birgunj_votes():
       'percentage': vote_percentage,
       'total_votes': total_votes,
     }
+
+def get_current_time():
+    utctime = datetime.datetime.utcnow()
+    offset = datetime.timedelta(hours=5, minutes=45)
+    nepaltime = utctime + offset
+    time_str = nepaltime.strftime("%d %b %I:%M %p")
+    return time_str
 
 if __name__ == '__main__':
     from pprint import pprint

@@ -9,6 +9,7 @@ from news import (
     get_ktm_votes, get_lalitpur_votes, get_bharatpur_votes, get_dhangadi_votes,
     get_pokhara_votes, get_biratnagar_votes, get_birgunj_votes, concat_party,
     get_damak_votes,get_hetauda_votes, get_janakpur_votes, get_dharan_votes, get_jitpur_votes,
+    get_current_time,
 )
 
 from keep_alive import keep_alive
@@ -48,7 +49,7 @@ def main():
         Lalitpur=get_lalitpur_votes,
     )
 
-    source = "**Election Data Source**: https://election.ekantipur.com?lng=eng"
+    source = f"**Election Data Source**: https://election.ekantipur.com?lng=eng\n\n**Last updated**: {get_current_time()}"
     news = ("# News of Interest\n"
            "- [A Look at Balen's Core team and their strategic planning for KTM mayoral election]"
                 "(https://shilapatra.com/detail/85494)"
