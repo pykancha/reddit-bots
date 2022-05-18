@@ -73,7 +73,7 @@ def get_bharatpur_votes():
     mayor_dict = filter_data(data, mayors[:3])
     deputy_dict = filter_data(data, deputy)
     counted_votes = sum_total(filter_data(data, mayors))
-    counted_votes += 0.15 * counted_votes
+    counted_votes += 0.16 * counted_votes
     total_votes = 1_27_000
     vote_percentage = round((counted_votes / total_votes) * 100, 2)
     return {
