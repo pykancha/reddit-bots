@@ -54,7 +54,7 @@ def get_ktm_votes():
     mayor_dict = filter_data(data, mayors)
     deputy_dict = filter_data(data, deputy)
     counted_votes = sum_total(mayor_dict)
-    counted_votes += 0.15 * counted_votes
+    counted_votes += 0.2 * counted_votes
     total_votes = 1_91_186
     vote_percentage = round((counted_votes / total_votes) * 100, 2)
     return {
