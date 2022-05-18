@@ -32,16 +32,12 @@ def login(username):
 
 
 def main():
-    reddit = login(USERNAME)
-    submissions = [reddit.comment('i8lotdy')]
-    submissions = [reddit.submission('upxo3j')]
     city_data_map = dict(
         Kathmandu=get_ktm_votes,
         Bharatpur=get_bharatpur_votes,
-        Hetauda=get_hetauda_votes,
-        Damak=get_damak_votes,
         Dharan=get_dharan_votes,
-        JitpurSimara=get_jitpur_votes,
+        Damak=get_damak_votes,
+        Hetauda=get_hetauda_votes,
         Janakpur=get_janakpur_votes,
         Dhangadi=get_dhangadi_votes,
         Pokhara=get_pokhara_votes,
@@ -54,7 +50,12 @@ def main():
            "- [A Look at Balen's Core team and their strategic planning for KTM mayoral election]"
                 "(https://shilapatra.com/detail/85494)"
               "([Reddit discussion]"
-                "(https://www.reddit.com/r/Nepal/comments/uqe55n/team_balen_4_people_involved_in_his_campaign/))\n\n"
+                "(https://www.reddit.com/r/Nepal/comments/uqe55n))\n\n"
+
+           "- [All dalit *independent* panel elected in a ward of a rural municipality in Jumla]"
+              "(https://kathmandupost.com/karnali-province/2022/05/17/constantly-spurned-how-dalits-united-to-create-history-in-local-elections)"
+              "([Reddit discussion]"
+                "(https://www.reddit.com/r/Nepal/comments/uq3ko0))\n\n"
 
            "- [Setopati Analysis of Core kathmandu Votes: Game Over, Sthapit and Singh will fight for second spot]"
            "(https://en.setopati.com/political/158516)"
@@ -67,6 +68,7 @@ def main():
              "[API url for your personal automation](https://g7te1m.deta.dev/)"
     )
     text = ''
+    print("Started fetching at: ", get_current_time())
     for city, data in city_data_map.items():
         try:
             text += gen_msg(city, data) if city!='Kathmandu' else gen_msg(city, data, concat_name=True)
@@ -74,13 +76,39 @@ def main():
             print("Failed generating text, Skipping this time", e, city)
             return
         time.sleep(1)
+    print("Info fetched completed at: ", get_current_time())
+
+    submission_body = f"{text}\n\n{news}\n\n\n\n{footer}"
+    cached_submission = ''
+    try:
+        with open('cache.json', 'r') as rf:
+            cached_submission = rf.read()
+    except Exception as e:
+        print("Error: Reading cache file failed", e)
+
+    if cached_submission == submission_body:
+        print("Cached matched: No new updates")
+        #return
+
+    print("Cached unmatched: Updating")
+    # IMP: Write to cache before inserting timestamp for next time comparision
+    with open('cache.json', 'w') as wf:
+        wf.write(submission_body)
 
     submission_body = f"{source}\n\n{text}\n\n{news}\n\n\n\n{footer}"
 
+    reddit = login(USERNAME)
+    submissions = [reddit.comment('i8lotdy')]
+    submissions = [reddit.submission('upxo3j')]
+
     for submission in submissions:
         body = submission.selftext if not hasattr(submission, 'body') else submission.body
-        if body.strip() == submission_body.strip():
-            print("Yes")
+        body_list = body.strip().split("\n")
+        text_list = submission_body.strip().split("\n")
+        body_list.remove(body_list[2])
+        text_list.remove(text_list[2])
+        if body_list == text_list:
+            print("No new updates")
         else:
             try:
                 requests.get(GRAPH_URL)
