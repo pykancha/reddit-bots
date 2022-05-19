@@ -45,7 +45,10 @@ def main():
         Lalitpur=get_lalitpur_votes,
     )
 
-    source = f"**Election Data Source**: https://election.ekantipur.com?lng=eng\n\n**Last updated**: {get_current_time()}"
+    source = ("**Election Data Source**: https://election.ekantipur.com?lng=eng\n\n"
+              "**Data for every local ward/post**: [Official ECN website](https://result.election.gov.np/LocalElectionResult2079.aspx)\n\n"
+              f"**Last updated**: {get_current_time()}"
+    )
     news = ("# News of Interest\n"
            "- [A Look at Balen's Core team and their strategic planning for KTM mayoral election]"
                 "(https://shilapatra.com/detail/85494)"
