@@ -282,14 +282,17 @@ def get_birgunj_votes():
       'total_votes': total_votes,
     }
 
-def get_current_time():
+def get_current_time(utc=False):
     utctime = datetime.datetime.utcnow()
     offset = datetime.timedelta(hours=5, minutes=45)
     nepaltime = utctime + offset
+    if utc:
+        nepaltime = utctime
     time_str = nepaltime.strftime("%d %b %I:%M %p")
     return time_str
 
 if __name__ == '__main__':
     from pprint import pprint
     #pprint(get_janakpur_votes())
-    pprint(get_dharan_votes())
+    get_current_time(utc=False)
+    get_current_time(utc=True)

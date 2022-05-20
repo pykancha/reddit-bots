@@ -47,7 +47,7 @@ def main():
 
     source = ("**Election Data Source**: https://election.ekantipur.com?lng=eng\n\n"
               "**Data for every local ward/post**: [Official ECN website](https://result.election.gov.np/LocalElectionResult2079.aspx)\n\n"
-              f"**Last updated**: {get_current_time()}"
+              f"**Last updated**: {get_current_time()} (UTC: {get_current_time(utc=True)})"
     )
     news = ("# News of Interest\n"
            "- [A Look at Balen's Core team and their strategic planning for KTM mayoral election]"
@@ -140,7 +140,7 @@ def gen_msg(city, data, concat_name=False):
                 f"- **Vote counted**: {data['percentage']}% ({data['vote_counted']:,})\n"
         )
         footer = (
-                f"- Ward wise mayor votes [Live Gdocs Link](https://docs.google.com/spreadsheets/d/1xryvWM5TuvY9sEobJa4zHYuifp3hlLnlQtt-PD8042g/edit?usp=sharing) (dm me for contributing)\n"
+                f"- Ward wise mayor votes [Live Gdocs Link](https://docs.google.com/spreadsheets/d/1xryvWM5TuvY9sEobJa4zHYuifp3hlLnlQtt-PD8042g/edit?usp=sharing)\n"
                 f"- [Lead Gap Visualization By u/time_chemist_8566]({GRAPH_URL})\n"
                 f"- [CSV/Excel data dump of KTM mayor election updates](https://g7te1m.deta.dev/data/)"
         )
