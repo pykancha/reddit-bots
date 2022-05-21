@@ -36,12 +36,10 @@ def main():
         Kathmandu=get_ktm_votes,
         Bharatpur=get_bharatpur_votes,
         Dharan=get_dharan_votes,
-        Damak=get_damak_votes,
-        Hetauda=get_hetauda_votes,
-        Janakpur=get_janakpur_votes,
         Dhangadi=get_dhangadi_votes,
+        Janakpur=get_janakpur_votes,
+        Damak=get_damak_votes,
         Pokhara=get_pokhara_votes,
-        Biratnagar=get_biratnagar_votes,
         Lalitpur=get_lalitpur_votes,
     )
 
@@ -134,6 +132,7 @@ def gen_msg(city, data, concat_name=False):
 
     voter_stat = ''
     footer = ''
+
     if city == 'Kathmandu':
         voter_stat = (
                 f"- **Total eligible voters**: 300,242 (64% = {data['total_votes']:,})\n"
@@ -146,6 +145,10 @@ def gen_msg(city, data, concat_name=False):
         )
     elif data.get('total_votes', 0) and data.get('percentage', 0):
         voter_stat = f"- **Vote counted**: {data['percentage']}% ({data['vote_counted']:,} of {data['total_votes']:,})"
+    # extras info (typically vote counting ended notice and winer declaration)
+    if city == 'Damak':
+        voter_stat += f"\n- **Ram Kumar Thapa From RPP wins in Oli's home area.**"
+
     metadata = f"# {city}\n{voter_stat}\n\n"
 
     # Utils functions
