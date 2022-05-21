@@ -175,6 +175,7 @@ def get_damak_votes():
     counted_votes = sum_total(filter_data(data, mayors))
     counted_votes += 0.15 * counted_votes
     total_votes = 39_949
+    counted_votes = total_votes
     vote_percentage = round((counted_votes / total_votes) * 100, 2)
 
     return {
@@ -234,7 +235,6 @@ def get_dharan_votes():
     counted_votes = sum_total(mayor_dict)
     counted_votes += 0.23 * counted_votes
     total_votes = 62_897
-    counted_votes = total_votes
     vote_percentage = round((counted_votes / total_votes) * 100, 2)
 
     return {
