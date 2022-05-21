@@ -148,6 +148,8 @@ def gen_msg(city, data, concat_name=False):
     # extras info (typically vote counting ended notice and winer declaration)
     if city == 'Damak':
         voter_stat += f"\n- **Ram Kumar Thapa From RPP wins in Oli's home area.**"
+    if city == 'Dhangadi':
+        voter_stat += f"\n- **Independent candidate Gopal Hamal (Businessman) wins.**"
 
     metadata = f"# {city}\n{voter_stat}\n\n"
 
