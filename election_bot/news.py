@@ -228,9 +228,9 @@ def get_janakpur_votes():
 def get_dharan_votes():
     req_url = f'{url}url?url=https://election.ekantipur.com/pradesh-1/district-sunsari/dharan?lng=eng'
     data = request_url(req_url)
-    mayors = ["Kishore Rai", "Harka Raj Rai", "Manju Bhandari Subedi", "Naresh", "Tajub", "Raj Kumar Rai"]
+    mayors = ["Kishore Rai", "Harka Raj Rai"]
     deputy = []
-    mayor_dict = filter_data(data[:-10], mayors)
+    mayor_dict = filter_data(data[:2], mayors)
     deputy_dict = filter_data(data, deputy)
     counted_votes = sum_total(mayor_dict)
     counted_votes += 0.23 * counted_votes
@@ -296,5 +296,4 @@ def get_current_time(utc=False):
 if __name__ == '__main__':
     from pprint import pprint
     #pprint(get_janakpur_votes())
-    get_current_time(utc=False)
-    get_current_time(utc=True)
+    pprint(get_dharan_votes())
