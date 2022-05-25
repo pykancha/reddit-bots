@@ -153,7 +153,7 @@ def gen_msg(city, data, concat_name=False):
     if city == 'Dharan':
         voter_stat += f"\n- **Independent candidate Harka Sampang Rai Wins.**"
     if city == 'Bharatpur':
-        voter_stat += f"\n- **Moist Center candidate Renu Dahal Wins.**"
+        voter_stat += f"\n- **Maoist Center candidate Renu Dahal Wins.**"
     if city == 'Lalitpur':
         voter_stat += f"\n- **Chiri Babu Maharjan from Nepali Congress Wins.**"
     if city == 'Pokhara':
