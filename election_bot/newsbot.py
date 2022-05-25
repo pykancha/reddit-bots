@@ -149,9 +149,19 @@ def gen_msg(city, data, concat_name=False):
     if city == 'Damak':
         voter_stat += f"\n- **Ram Kumar Thapa From RPP wins in Oli's home area.**"
     if city == 'Dhangadi':
-        voter_stat += f"\n- **Independent candidate Gopal Hamal (Businessman) wins.**"
+        voter_stat += f"\n- **Independent candidate Gopal Hamal (Businessman) Wins.**"
     if city == 'Dharan':
         voter_stat += f"\n- **Independent candidate Harka Sampang Rai Wins.**"
+    if city == 'Bharatpur':
+        voter_stat += f"\n- **Moist Center candidate Renu Dahal Wins.**"
+    if city == 'Lalitpur':
+        voter_stat += f"\n- **Chiri Babu Maharjan from Nepali Congress Wins.**"
+    if city == 'Pokhara':
+        voter_stat += f"\n- **Dhana Raj Acharya from CPN(US) Wins.**"
+    if city == 'Janakpur':
+        voter_stat += f"\n- **Independent(Congress Rebel) candidate Manoj Sah Sudi Wins.**"
+
+
 
     metadata = f"# {city}\n{voter_stat}\n\n"
 
