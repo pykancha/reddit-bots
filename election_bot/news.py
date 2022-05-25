@@ -221,8 +221,6 @@ def get_janakpur_votes():
       'mayor': mayor_dict,
       'deputy': deputy_dict,
       'vote_counted': int(counted_votes),
-      'percentage': vote_percentage,
-      'total_votes': total_votes,
     }
 
 def get_dharan_votes():
