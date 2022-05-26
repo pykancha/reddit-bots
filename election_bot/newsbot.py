@@ -53,6 +53,9 @@ def main():
               "([Reddit discussion]"
                 "(https://www.reddit.com/r/Nepal/comments/uqe55n))\n\n"
 
+           "- [Harka Sampang, A Revolution. A look into Harka and his lone struggle to see better dharan]"
+                "(https://www.setopati.com/election/localelection/272021)\n\n"
+
            "- [All dalit *independent* panel elected in a ward of a rural municipality in Jumla]"
               "(https://kathmandupost.com/karnali-province/2022/05/17/constantly-spurned-how-dalits-united-to-create-history-in-local-elections)"
               "([Reddit discussion]"
