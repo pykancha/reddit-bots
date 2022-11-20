@@ -25,11 +25,7 @@ load_dotenv()
 
 FETCH_LIST = [
     "pradesh-7/district-dadeldhura",
-    "pradesh-1/district-jhapa",
     "pradesh-3/district-kathmandu",
-    "pradesh-3/district-lalitpur",
-    "pradesh-3/district-bhaktapur",
-    "pradesh-3/district-chitwan",
     "pradesh-3/district-chitwan",
 ]
 
