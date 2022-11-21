@@ -47,6 +47,7 @@ def login(username):
         username=username,
         password=os.getenv(f"{BOT_NAME}_PASS"),
     )
+    reddit.validate_on_submit = True
     return reddit
 
 
@@ -134,11 +135,12 @@ def main():
         if body_list == text_list:
             print("No new updates")
         else:
-            print(submission.author)
+            print(":: Posting...")
             try:
                 submission.edit(body=submission_body)
+                print(":: Posted as", submission.author)
             except Exception as e:
-                print("Praw submit error Skipping this time..", e)
+                print("", e)
 
 
 def gen_summary_msg(data):

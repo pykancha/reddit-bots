@@ -238,12 +238,13 @@ def filter_data(data, filter):
 
 def party_shortform(partyname):
     fullform_map = {
-        "Rastriya Prajatantra Party": "RPP",
+        "Rastriya Prajatantra Party": "RaPraPa",
         "Maoist Center": "Maoist",
         "Nepali Congress": "Congress",
         "CPN (Unified Socialist)": "CPN (US)",
         "Bibeksheel Sajha Party": "BS Party",
-        "Janata Samajwadi Party": "JSP",
+        "Janata Samajwadi Party": "JaSaPa",
+        "Loktantrik Samajwadi Party": "LoSaPa",
         "Hamro Nepali Party": "Hamro Nepali Party (Lauro)",
     }
     return fullform_map.get(partyname, partyname)
