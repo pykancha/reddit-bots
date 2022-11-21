@@ -77,6 +77,7 @@ def main():
         "**Election Data Source**: https://election.ekantipur.com?lng=eng\n\n"
         "**All Party/Candidates PowerBi Visualization by u/authorsuraj**: [PowerBi Link](https://app.powerbi.com/view?r=eyJrIjoiNTU4NDY2YTYtMDU0MS00M2I5LWJjMTAtZGY5MGE5M2IyNGE3IiwidCI6ImNiNzIwMDNkLWYwMjctNDgwMC1hMWZkLTYwYzVmYjRmYmU0OCJ9&pageName=ReportSection)\n\n"
         "**Official And Detailed Election Data**: [Official ECN website](https://result.election.gov.np/ElectionResultCentral2079.aspx)\n\n"
+        """**Discord Bot**: [Invite Link](https://discord.com/login?redirect_to=%2Foauth2%2Fauthorize%3Fclient_id%3D975232650996494376%26permissions%3D275415039040%26scope%3Dbot) Create text channel "election-updates", prefix command: "e?help" or "?help".\n\n"""
         f"**Last updated**: {get_current_time()} (UTC: {get_current_time(utc=True)})\n\n"
         "**Tip:** *Use auto refresh addons (link for [Chrome/Edge](https://chrome.google.com/webstore/detail/auto-refresh-plus-page-mo/hgeljhfekpckiiplhkigfehkdpldcggm/related), [Firefox](https://addons.mozilla.org/en-US/firefox/addon/tab-reloader/?utm_source=addons.mozilla.org&utm_medium=referral&utm_content=search)) to configure auto-refresh in 30 seconds and monitor page changes*\n\n"
     )
