@@ -8,7 +8,6 @@ from parser import (
     get_current_time,
     get_data,
     get_summary_data,
-    jhapa_three_votes,
     kathmandu_four_votes,
     kathmandu_one_votes,
     kathmandu_seven_votes,
@@ -55,16 +54,15 @@ def login(username):
 def main():
     api_data = get_data(FETCH_LIST)
     election_area_map = {
+        "Dadeldhura 1": partial(dadeldura_one_votes, api_data),
+        "Chitwan 2": partial(chitwan_two_votes, api_data),
         "Kathmandu 1": partial(kathmandu_one_votes, api_data),
         "Kathmandu 4": partial(kathmandu_four_votes, api_data),
         "Kathmandu 7": partial(kathmandu_seven_votes, api_data),
         "Lalitpur 3": partial(lalitpur_three_votes, api_data),
         "Lalitpur 2": partial(lalitpur_two_votes, api_data),
-        "Jhapa 3": partial(jhapa_three_votes, api_data),
         "Saptari 2": partial(saptari_two_votes, api_data),
         "Bhaktapur 2": partial(bhaktapur_two_votes, api_data),
-        "Dadeldhura 1": partial(dadeldura_one_votes, api_data),
-        "Chitwan 2": partial(chitwan_two_votes, api_data),
     }
 
     source = (
