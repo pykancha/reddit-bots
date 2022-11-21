@@ -158,7 +158,7 @@ def gen_msg(city, data, concat_name=False):
         vote_diff = ""
         if index == 0:
             try:
-                second_candidate_votes = int(data["candidates"][2]["votes"])
+                second_candidate_votes = int(data["candidates"][1]["votes"])
                 vote_diff = f"  (+ {(int(d['votes']) - second_candidate_votes):,}) "
             except Exception as e:
                 print("Vote diff calc error", e, d["name"])
