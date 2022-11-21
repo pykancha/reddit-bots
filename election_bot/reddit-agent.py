@@ -15,6 +15,7 @@ from parser import (
     lalitpur_two_votes,
     party_shortform,
     saptari_two_votes,
+    westnawalparasi_one_votes,
 )
 
 import praw
@@ -34,6 +35,7 @@ FETCH_LIST = [
     "pradesh-3/district-chitwan",
     "pradesh-2/district-saptari",
     "pradesh-1/district-jhapa",
+    "pradesh-5/district-nawalparasiwest",
 ]
 
 
@@ -62,6 +64,7 @@ def main():
         "Lalitpur 3": partial(lalitpur_three_votes, api_data),
         "Lalitpur 2": partial(lalitpur_two_votes, api_data),
         "Saptari 2": partial(saptari_two_votes, api_data),
+        "West Nawalparasi 1": partial(westnawalparasi_one_votes, api_data),
         "Bhaktapur 2": partial(bhaktapur_two_votes, api_data),
     }
 
