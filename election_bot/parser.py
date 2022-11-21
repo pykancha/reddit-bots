@@ -149,6 +149,28 @@ def chitwan_two_votes(data):
     }
 
 
+def saptari_two_votes(data):
+    all_candidate_data = data["saptari"]["constituency : 2"]
+    candidates_filter = [
+        "Chandra Kanta Raut",
+        "Jay Prakash Thakur",
+        "Upendra Yadav",
+    ]
+    filtered_candiate_data = filter_data(all_candidate_data, candidates_filter)
+    counted_votes = sum_total(all_candidate_data)
+    # Add up invalid votes through percentage guess
+    corrected_counted_votes = int(counted_votes + 0.2 * counted_votes) + 1
+    # Lookup newspaper to get this number estimate by ECN
+    # total_votes = 0
+    # vote_percentage = round((counted_votes / total_votes) * 100, 2)
+    return {
+        "candidates": filtered_candiate_data,
+        "vote_counted": corrected_counted_votes,
+        # "percentage": vote_percentage,
+        # "total_votes": total_votes,
+    }
+
+
 def filter_data(data, filter):
     results = []
     for data_dict in data:
@@ -156,6 +178,8 @@ def filter_data(data, filter):
         if name.split(" ")[0] in filter or name.strip() in filter:
             if name == "Ashmita Singh (Manusi) Yami Bhattarai":
                 data_dict["name"] = "Manusi Yami Bhattarai"
+            if name == "Chandra Kanta Raut":
+                data_dict["name"] = "Chandra Kanta (C.K) Raut"
             results.append(data_dict)
             continue
     return results
@@ -207,8 +231,9 @@ if __name__ == "__main__":
             "pradesh-3/district-kathmandu",
             "pradesh-3/district-bhaktapur",
             "pradesh-3/district-lalitpur",
+            "pradesh-2/district-saptari",
         ]
     )
     pprint(dadeldura_one_votes(data))
     pprint(kathmandu_seven_votes(data))
-    pprint(lalitpur_three_votes(data))
+    pprint(saptari_two_votes(data))

@@ -11,17 +11,15 @@ from parser import (
     kathmandu_seven_votes,
     lalitpur_three_votes,
     party_shortform,
+    saptari_two_votes,
 )
 
 import praw
-import requests
 from dotenv import load_dotenv
 
 USERNAME = "election-bot-2079"
 # SUBMISSION_IDS = ["upmnp6"]
 SUBMISSION_IDS = ["z0opw6"]
-
-# GRAPH_URL = "https://electionupdate.herokuapp.com"
 
 load_dotenv()
 
@@ -31,6 +29,7 @@ FETCH_LIST = [
     "pradesh-3/district-bhaktapur",
     "pradesh-3/district-lalitpur",
     "pradesh-3/district-chitwan",
+    "pradesh-2/district-saptari",
 ]
 
 
@@ -53,6 +52,7 @@ def main():
         "Kathmandu 1": partial(kathmandu_one_votes, api_data),
         "Kathmandu 7": partial(kathmandu_seven_votes, api_data),
         "Lalitpur 3": partial(lalitpur_three_votes, api_data),
+        "Saptari 2": partial(saptari_two_votes, api_data),
         "Bhaktapur 2": partial(bhaktapur_two_votes, api_data),
         "Dadeldhura 1": partial(dadeldura_one_votes, api_data),
         "Chitwan 2": partial(chitwan_two_votes, api_data),
@@ -66,16 +66,6 @@ def main():
     )
     news = (
         "# News of Interest\n"
-        "- [A Look at Balen's Core team and their strategic planning for KTM mayoral election]"
-        "(https://shilapatra.com/detail/85494)"
-        "([Reddit discussion]"
-        "(https://www.reddit.com/r/Nepal/comments/uqe55n))\n\n"
-        "- [Harka Sampang, A Revolution. A look into Harka and his lone struggle to see better dharan]"
-        "(https://www.setopati.com/election/localelection/272021)\n\n"
-        "- [All dalit *independent* panel elected in a ward of a rural municipality in Jumla]"
-        "(https://kathmandupost.com/karnali-province/2022/05/17/constantly-spurned-how-dalits-united-to-create-history-in-local-elections)"
-        "([Reddit discussion]"
-        "(https://www.reddit.com/r/Nepal/comments/uq3ko0))\n\n"
         "- [Setopati Analysis of Core kathmandu Votes: Game Over, Sthapit and Singh will fight for second spot]"
         "(https://en.setopati.com/political/158516)"
         "\n\n\n\n"
@@ -131,10 +121,6 @@ def main():
         if body_list == text_list:
             print("No new updates")
         else:
-            try:
-                requests.get(GRAPH_URL)
-            except Exception as e:
-                print("Graph url cannot accessed skipping", e)
             print(submission.author)
             try:
                 submission.edit(body=submission_body)
