@@ -134,3 +134,6 @@ dmypy.json
 .#*
 *.env*
 /election_bot/cache.json
+
+# PYCHARM files
+.idea
