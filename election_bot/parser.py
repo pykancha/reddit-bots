@@ -66,6 +66,28 @@ def lalitpur_three_votes(data):
     }
 
 
+def rauthat_one_votes(data):
+    all_candidate_data = data["rauthat"]["constituency : 1"]
+    candidates_filter = [
+        "Madhav Kumar Nepal",
+        "Ajay Kumar Gupta",
+        "Rajendra Prasad Shah",
+    ]
+    filtered_candiate_data = filter_data(all_candidate_data, candidates_filter)
+    counted_votes = sum_total(all_candidate_data)
+    # Add up invalid votes through percentage guess
+    corrected_counted_votes = int(counted_votes + 0.2 * counted_votes) + 1
+    # Lookup newspaper to get this number estimate by ECN
+    # total_votes = 0
+    # vote_percentage = round((counted_votes / total_votes) * 100, 2)
+    return {
+        "candidates": filtered_candiate_data,
+        "vote_counted": corrected_counted_votes,
+        # "percentage": vote_percentage,
+        # "total_votes": total_votes,
+    }
+
+
 def westnawalparasi_one_votes(data):
     all_candidate_data = data["nawalparasiwest"]["constituency : 1"]
     candidates_filter = [
@@ -332,10 +354,12 @@ if __name__ == "__main__":
             "pradesh-2/district-saptari",
             "pradesh-1/district-jhapa",
             "pradesh-5/district-nawalparasiwest",
+            "pradesh-2/district-rauthat",
         ]
     )
     pprint(dadeldura_one_votes(data))
     pprint(jhapa_three_votes(data))
     pprint(saptari_two_votes(data))
     pprint(westnawalparasi_one_votes(data))
+    pprint(rauthat_one_votes(data))
     pprint(get_summary_data())

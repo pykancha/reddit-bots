@@ -14,6 +14,7 @@ from parser import (
     lalitpur_three_votes,
     lalitpur_two_votes,
     party_shortform,
+    rauthat_one_votes,
     saptari_two_votes,
     westnawalparasi_one_votes,
 )
@@ -34,6 +35,7 @@ FETCH_LIST = [
     "pradesh-3/district-lalitpur",
     "pradesh-3/district-chitwan",
     "pradesh-2/district-saptari",
+    "pradesh-2/district-rauthat",
     "pradesh-1/district-jhapa",
     "pradesh-5/district-nawalparasiwest",
 ]
@@ -59,12 +61,13 @@ def main():
         "Dadeldhura 1": partial(dadeldura_one_votes, api_data),
         "Chitwan 2": partial(chitwan_two_votes, api_data),
         "Kathmandu 1": partial(kathmandu_one_votes, api_data),
-        "Kathmandu 4": partial(kathmandu_four_votes, api_data),
-        "Kathmandu 7": partial(kathmandu_seven_votes, api_data),
         "Lalitpur 3": partial(lalitpur_three_votes, api_data),
+        "Kathmandu 7": partial(kathmandu_seven_votes, api_data),
+        "Rauthat 1": partial(rauthat_one_votes, api_data),
+        "Kathmandu 4": partial(kathmandu_four_votes, api_data),
+        "West Nawalparasi 1": partial(westnawalparasi_one_votes, api_data),
         "Lalitpur 2": partial(lalitpur_two_votes, api_data),
         "Saptari 2": partial(saptari_two_votes, api_data),
-        "West Nawalparasi 1": partial(westnawalparasi_one_votes, api_data),
         "Bhaktapur 2": partial(bhaktapur_two_votes, api_data),
     }
 
