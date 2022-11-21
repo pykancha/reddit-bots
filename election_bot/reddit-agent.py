@@ -68,7 +68,8 @@ def main():
         "**Election Data Source**: https://election.ekantipur.com?lng=eng\n\n"
         "**All Party/Candidates PowerBi Visualization by u/authorsuraj**: [PowerBi Link](https://app.powerbi.com/view?r=eyJrIjoiNTU4NDY2YTYtMDU0MS00M2I5LWJjMTAtZGY5MGE5M2IyNGE3IiwidCI6ImNiNzIwMDNkLWYwMjctNDgwMC1hMWZkLTYwYzVmYjRmYmU0OCJ9&pageName=ReportSection)\n\n"
         "**Official And Detailed Election Data**: [Official ECN website](https://result.election.gov.np/ElectionResultCentral2079.aspx)\n\n"
-        f"**Last updated**: {get_current_time()} (UTC: {get_current_time(utc=True)})"
+        f"**Last updated**: {get_current_time()} (UTC: {get_current_time(utc=True)})\n\n"
+        "**Tip:** *Use auto refresh addons (link for [Chrome/Edge](https://chrome.google.com/webstore/detail/auto-refresh-plus-page-mo/hgeljhfekpckiiplhkigfehkdpldcggm/related), [Firefox](https://addons.mozilla.org/en-US/firefox/addon/tab-reloader/?utm_source=addons.mozilla.org&utm_medium=referral&utm_content=search)) to configure auto-refresh in 30 seconds and monitor page changes*\n\n"
     )
     news = (
         "# News of Interest\n"
@@ -85,7 +86,10 @@ def main():
     text = ""
     print("Started fetching at: ", get_current_time())
     summary_data = get_summary_data()
-    text += gen_summary_msg(summary_data)
+    try:
+        text += gen_summary_msg(summary_data)
+    except Exception as e:
+        print("Failed generating summary, Skipping this time", e)
 
     for city, data in election_area_map.items():
         try:
