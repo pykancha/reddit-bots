@@ -2,11 +2,14 @@ import os
 import time
 from functools import partial
 from parser import (
+    bhaktapur_two_votes,
     chitwan_two_votes,
     dadeldura_one_votes,
     get_current_time,
     get_data,
     kathmandu_one_votes,
+    kathmandu_seven_votes,
+    lalitpur_three_votes,
     party_shortform,
 )
 
@@ -15,9 +18,8 @@ import requests
 from dotenv import load_dotenv
 
 USERNAME = "election-bot-2079"
-SUBMISSION_IDS = [
-    "upmnp6",
-]
+# SUBMISSION_IDS = ["upmnp6"]
+SUBMISSION_IDS = ["z0opw6"]
 
 # GRAPH_URL = "https://electionupdate.herokuapp.com"
 
@@ -26,6 +28,8 @@ load_dotenv()
 FETCH_LIST = [
     "pradesh-7/district-dadeldhura",
     "pradesh-3/district-kathmandu",
+    "pradesh-3/district-bhaktapur",
+    "pradesh-3/district-lalitpur",
     "pradesh-3/district-chitwan",
 ]
 
@@ -46,14 +50,18 @@ def login(username):
 def main():
     api_data = get_data(FETCH_LIST)
     election_area_map = {
+        "Lalitpur 3": partial(lalitpur_three_votes, api_data),
+        "Bhaktapur 2": partial(bhaktapur_two_votes, api_data),
+        "Kathmandu 7": partial(kathmandu_seven_votes, api_data),
         "Dadeldhura 1": partial(dadeldura_one_votes, api_data),
-        "Kathmandu 1": partial(kathmandu_one_votes, api_data),
         "Chitwan 2": partial(chitwan_two_votes, api_data),
+        "Kathmandu 1": partial(kathmandu_one_votes, api_data),
     }
 
     source = (
         "**Election Data Source**: https://election.ekantipur.com?lng=eng\n\n"
-        # "**Data for every local ward/post**: [Official ECN website](https://result.election.gov.np/LocalElectionResult2079.aspx)\n\n"
+        "**All Party/Candidates PowerBi Visualization by u/authorsuraj**: [PowerBi Link](https://app.powerbi.com/view?r=eyJrIjoiNTU4NDY2YTYtMDU0MS00M2I5LWJjMTAtZGY5MGE5M2IyNGE3IiwidCI6ImNiNzIwMDNkLWYwMjctNDgwMC1hMWZkLTYwYzVmYjRmYmU0OCJ9&pageName=ReportSection)\n\n"
+        "**Official And Detailed Election Data**: [Official ECN website](https://result.election.gov.np/ElectionResultCentral2079.aspx)\n\n"
         f"**Last updated**: {get_current_time()} (UTC: {get_current_time(utc=True)})"
     )
     news = (
@@ -76,7 +84,7 @@ def main():
         "*contribute*: "
         "[Bot code](https://github.com/pykancha/reddit-bots) |"
         "[API code](https://github.com/hemanta212/nepal-election-api) |"
-        # "[API url for your personal automation](https://g7te1m.deta.dev/)"
+        "[API url for your personal automation](https://electionapi.osac.org.np)"
     )
     text = ""
     print("Started fetching at: ", get_current_time())
@@ -147,6 +155,8 @@ def gen_msg(city, data, concat_name=False):
 
     if data.get("total_votes", 0) and data.get("percentage", 0):
         voter_stat = f"- **Vote counted**: {data['percentage']}% ({data['vote_counted']:,} of {data['total_votes']:,})"
+    elif data.get("vote_counted", 0) <= 1:
+        voter_stat += f"- **Vote counting not started yet.**"
 
     metadata = f"# {city}\n{voter_stat}\n\n"
 
@@ -180,4 +190,4 @@ def gen_msg(city, data, concat_name=False):
 if __name__ == "__main__":
     while True:
         main()
-        time.sleep(60)
+        time.sleep(30)

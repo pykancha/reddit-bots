@@ -36,6 +36,74 @@ def dadeldura_one_votes(data):
     }
 
 
+def lalitpur_three_votes(data):
+    all_candidate_data = data["lalitpur"]["constituency : 3"]
+    candidates_filter = [
+        "Amrit Khadka",
+        "Toshima Karki",
+        "Kiran Shahi",
+        "Pampha Bhushal",
+    ]
+    filtered_candiate_data = filter_data(all_candidate_data, candidates_filter)
+    counted_votes = sum_total(all_candidate_data)
+    # Add up invalid votes through percentage guess
+    corrected_counted_votes = int(counted_votes + 0.2 * counted_votes) + 1
+    # Lookup newspaper to get this number estimate by ECN
+    # total_votes = 0
+    # vote_percentage = round((counted_votes / total_votes) * 100, 2)
+    return {
+        "candidates": filtered_candiate_data,
+        "vote_counted": corrected_counted_votes,
+        # "percentage": vote_percentage,
+        # "total_votes": total_votes,
+    }
+
+
+def kathmandu_seven_votes(data):
+    all_candidate_data = data["kathmandu"]["constituency : 7"]
+    candidates_filter = [
+        "Ashmita Singh (Manusi) Yami Bhattarai",
+        "Ganesh Parajuli",
+        "Shyam Kumar Ghimire",
+        "Prabendra",
+    ]
+    filtered_candiate_data = filter_data(all_candidate_data, candidates_filter)
+    counted_votes = sum_total(all_candidate_data)
+    # Add up invalid votes through percentage guess
+    corrected_counted_votes = int(counted_votes + 0.2 * counted_votes) + 1
+    # Lookup newspaper to get this number estimate by ECN
+    # total_votes = 0
+    # vote_percentage = round((counted_votes / total_votes) * 100, 2)
+    return {
+        "candidates": filtered_candiate_data,
+        "vote_counted": corrected_counted_votes,
+        # "percentage": vote_percentage,
+        # "total_votes": total_votes,
+    }
+
+
+def bhaktapur_two_votes(data):
+    all_candidate_data = data["bhaktapur"]["constituency : 2"]
+    candidates_filter = [
+        "Durlav Thapa Chhetri",
+        "Mahesh Basnet",
+        "Sajan BK",
+    ]
+    filtered_candiate_data = filter_data(all_candidate_data, candidates_filter)
+    counted_votes = sum_total(all_candidate_data)
+    # Add up invalid votes through percentage guess
+    corrected_counted_votes = int(counted_votes + 0.2 * counted_votes) + 1
+    # Lookup newspaper to get this number estimate by ECN
+    # total_votes = 0
+    # vote_percentage = round((counted_votes / total_votes) * 100, 2)
+    return {
+        "candidates": filtered_candiate_data,
+        "vote_counted": corrected_counted_votes,
+        # "percentage": vote_percentage,
+        # "total_votes": total_votes,
+    }
+
+
 def kathmandu_one_votes(data):
     all_candidate_data = data["kathmandu"]["constituency : 1"]
     candidates_filter = [
@@ -86,6 +154,8 @@ def filter_data(data, filter):
     for data_dict in data:
         name = data_dict["name"]
         if name.split(" ")[0] in filter or name.strip() in filter:
+            if name == "Ashmita Singh (Manusi) Yami Bhattarai":
+                data_dict["name"] = "Manusi Yami Bhattarai"
             results.append(data_dict)
             continue
     return results
@@ -99,6 +169,7 @@ def party_shortform(partyname):
         "CPN (Unified Socialist)": "CPN (US)",
         "Bibeksheel Sajha Party": "BS Party",
         "Janata Samajwadi Party": "JSP",
+        "Hamro Nepali Party": "Hamro Nepali Party (Lauro)",
     }
     return fullform_map.get(partyname, partyname)
 
@@ -134,6 +205,10 @@ if __name__ == "__main__":
         [
             "pradesh-7/district-dadeldhura",
             "pradesh-3/district-kathmandu",
+            "pradesh-3/district-bhaktapur",
+            "pradesh-3/district-lalitpur",
         ]
     )
     pprint(dadeldura_one_votes(data))
+    pprint(kathmandu_seven_votes(data))
+    pprint(lalitpur_three_votes(data))
