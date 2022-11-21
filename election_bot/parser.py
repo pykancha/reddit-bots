@@ -66,6 +66,51 @@ def lalitpur_three_votes(data):
     }
 
 
+def jhapa_two_votes(data):
+    all_candidate_data = data["jhapa"]["constituency : 2"]
+    candidates_filter = [
+        "Dev Raj Ghimire",
+        "Bhadra Prasad Nepal",
+        "Hari Kumar Rana Magar",
+        "Rudra Prasad Giri",
+    ]
+    filtered_candiate_data = filter_data(all_candidate_data, candidates_filter)
+    counted_votes = sum_total(all_candidate_data)
+    # Add up invalid votes through percentage guess
+    corrected_counted_votes = int(counted_votes + 0.2 * counted_votes) + 1
+    # Lookup newspaper to get this number estimate by ECN
+    # total_votes = 0
+    # vote_percentage = round((counted_votes / total_votes) * 100, 2)
+    return {
+        "candidates": filtered_candiate_data,
+        "vote_counted": corrected_counted_votes,
+        # "percentage": vote_percentage,
+        # "total_votes": total_votes,
+    }
+
+
+def jhapa_four_votes(data):
+    all_candidate_data = data["jhapa"]["constituency : 4"]
+    candidates_filter = [
+        "Shambhu Prasad Dhakal",
+        "Lal Prasad Sawa Limbu",
+        "Deu Kumar Thebe",
+    ]
+    filtered_candiate_data = filter_data(all_candidate_data, candidates_filter)
+    counted_votes = sum_total(all_candidate_data)
+    # Add up invalid votes through percentage guess
+    corrected_counted_votes = int(counted_votes + 0.2 * counted_votes) + 1
+    # Lookup newspaper to get this number estimate by ECN
+    # total_votes = 0
+    # vote_percentage = round((counted_votes / total_votes) * 100, 2)
+    return {
+        "candidates": filtered_candiate_data,
+        "vote_counted": corrected_counted_votes,
+        # "percentage": vote_percentage,
+        # "total_votes": total_votes,
+    }
+
+
 def kathmandu_two_votes(data):
     all_candidate_data = data["kathmandu"]["constituency : 2"]
     candidates_filter = [
@@ -231,7 +276,7 @@ def lalitpur_two_votes(data):
 def jhapa_three_votes(data):
     all_candidate_data = data["jhapa"]["constituency : 3"]
     candidates_filter = [
-        "Rajendra Prasad Linden",
+        "Rajendra Prasad Lingden",
         "Krishna Prasad Sitaula",
         "Prakash Pathak",
     ]
@@ -397,6 +442,8 @@ def filter_data(data, filter):
                 data_dict["name"] = "Ranju Darsana"
             if name == "Dr.Pranaya Shemser Rana":
                 data_dict["name"] = "Pranaya Shumsher"
+            if name == "Bhadra Prasad Nepal":
+                data_dict["name"] = "Swagat Nepal"
             results.append(data_dict)
             continue
     return results
@@ -447,18 +494,11 @@ if __name__ == "__main__":
     data = get_data(
         [
             "pradesh-7/district-dadeldhura",
-            "pradesh-3/district-kathmandu",
-            "pradesh-3/district-bhaktapur",
-            "pradesh-3/district-lalitpur",
-            "pradesh-2/district-saptari",
             "pradesh-1/district-jhapa",
-            "pradesh-5/district-nawalparasiwest",
-            "pradesh-2/district-rauthat",
         ]
     )
     pprint(dadeldura_one_votes(data))
-    pprint(kathmandu_two_votes(data))
-    pprint(kathmandu_six_votes(data))
-    pprint(kathmandu_five_votes(data))
-    pprint(kathmandu_eight_votes(data))
+    pprint(jhapa_two_votes(data))
+    pprint(jhapa_three_votes(data))
+    pprint(jhapa_four_votes(data))
     pprint(get_summary_data())
