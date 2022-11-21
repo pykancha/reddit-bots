@@ -133,12 +133,7 @@ if __name__ == "__main__":
     data = get_data(
         [
             "pradesh-7/district-dadeldhura",
-            "pradesh-1/district-jhapa",
             "pradesh-3/district-kathmandu",
-            "pradesh-3/district-lalitpur",
-            "pradesh-3/district-bhaktapur",
-            "pradesh-3/district-chitwan",
-            "pradesh-3/district-chitwan",
         ]
     )
     pprint(dadeldura_one_votes(data))

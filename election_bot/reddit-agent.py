@@ -75,8 +75,8 @@ def main():
     footer = (
         "*contribute*: "
         "[Bot code](https://github.com/pykancha/reddit-bots) |"
-        "[API code](https://github.com/pykancha/election-api) |"
-        "[API url for your personal automation](https://g7te1m.deta.dev/)"
+        "[API code](https://github.com/hemanta212/nepal-election-api) |"
+        # "[API url for your personal automation](https://g7te1m.deta.dev/)"
     )
     text = ""
     print("Started fetching at: ", get_current_time())
