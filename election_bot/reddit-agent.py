@@ -7,6 +7,7 @@ from parser import (
     dadeldura_one_votes,
     get_current_time,
     get_data,
+    get_summary_data,
     kathmandu_four_votes,
     kathmandu_one_votes,
     kathmandu_seven_votes,
@@ -19,8 +20,8 @@ import praw
 from dotenv import load_dotenv
 
 USERNAME = "election-bot-2079"
-# SUBMISSION_IDS = ["upmnp6"]
-SUBMISSION_IDS = ["z0opw6"]
+SUBMISSION_IDS = ["upmnp6"]
+# SUBMISSION_IDS = ["z0opw6"]
 
 load_dotenv()
 
@@ -80,6 +81,9 @@ def main():
     )
     text = ""
     print("Started fetching at: ", get_current_time())
+    summary_data = get_summary_data()
+    text += gen_summary_msg(summary_data)
+
     for city, data in election_area_map.items():
         try:
             text += gen_msg(city, data)
@@ -130,6 +134,19 @@ def main():
                 print("Praw submit error Skipping this time..", e)
 
 
+def gen_summary_msg(data):
+    # Summary Format
+    title = "# Federal Seats Summary\n"
+    header = "Party|Leads|Wins|\n:--:|:--:|:--:|\n"
+    parties = []
+    for index, party_info in enumerate(data["federal"]):
+        parties.append(
+            f"{party_info['name']} | {party_info['leads']} | {party_info['wins']}"
+        )
+    summary_info = title + header + "\n".join(parties)
+    return f"{summary_info}\n\n"
+
+
 def gen_msg(city, data, concat_name=False):
     try:
         data = data()
@@ -153,7 +170,7 @@ def gen_msg(city, data, concat_name=False):
     party = lambda x: party_shortform(x["party"])
     vote_percent = lambda x: round((int(x["votes"]) / data["vote_counted"]) * 100, 1)
 
-    # Mayor format
+    # Candidate format
     header = "Candidate|Party|Votes|Percentage|\n:--:|:--:|:--:|:--:|\n"
     candidates = []
     for index, d in enumerate(data["candidates"]):

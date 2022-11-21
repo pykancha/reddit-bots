@@ -13,6 +13,13 @@ def get_data(places_list):
     return data
 
 
+def get_summary_data():
+    summary_url = f"{url}/summary"
+    print("Requesting at ", summary_url)
+    data = request_url(summary_url)
+    return data
+
+
 def request_url(url):
     response = requests.get(url)
     return response.json()
@@ -259,3 +266,4 @@ if __name__ == "__main__":
     pprint(dadeldura_one_votes(data))
     pprint(kathmandu_four_votes(data))
     pprint(saptari_two_votes(data))
+    pprint(get_summary_data())
