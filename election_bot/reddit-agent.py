@@ -7,6 +7,7 @@ from parser import (
     dadeldura_one_votes,
     get_current_time,
     get_data,
+    kathmandu_four_votes,
     kathmandu_one_votes,
     kathmandu_seven_votes,
     lalitpur_three_votes,
@@ -50,6 +51,7 @@ def main():
     api_data = get_data(FETCH_LIST)
     election_area_map = {
         "Kathmandu 1": partial(kathmandu_one_votes, api_data),
+        "Kathmandu 4": partial(kathmandu_four_votes, api_data),
         "Kathmandu 7": partial(kathmandu_seven_votes, api_data),
         "Lalitpur 3": partial(lalitpur_three_votes, api_data),
         "Saptari 2": partial(saptari_two_votes, api_data),

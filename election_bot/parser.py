@@ -82,6 +82,28 @@ def kathmandu_seven_votes(data):
     }
 
 
+def kathmandu_four_votes(data):
+    all_candidate_data = data["kathmandu"]["constituency : 4"]
+    candidates_filter = [
+        "Gagan Kumar Thapa",
+        "Rajan Bhattarai",
+        "Dr. Thakur Mohan Shrestha",
+    ]
+    filtered_candiate_data = filter_data(all_candidate_data, candidates_filter)
+    counted_votes = sum_total(all_candidate_data)
+    # Add up invalid votes through percentage guess
+    corrected_counted_votes = int(counted_votes + 0.2 * counted_votes) + 1
+    # Lookup newspaper to get this number estimate by ECN
+    # total_votes = 0
+    # vote_percentage = round((counted_votes / total_votes) * 100, 2)
+    return {
+        "candidates": filtered_candiate_data,
+        "vote_counted": corrected_counted_votes,
+        # "percentage": vote_percentage,
+        # "total_votes": total_votes,
+    }
+
+
 def bhaktapur_two_votes(data):
     all_candidate_data = data["bhaktapur"]["constituency : 2"]
     candidates_filter = [
@@ -235,5 +257,5 @@ if __name__ == "__main__":
         ]
     )
     pprint(dadeldura_one_votes(data))
-    pprint(kathmandu_seven_votes(data))
+    pprint(kathmandu_four_votes(data))
     pprint(saptari_two_votes(data))
