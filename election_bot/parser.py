@@ -66,6 +66,29 @@ def lalitpur_three_votes(data):
     }
 
 
+def kathmandu_eight_votes(data):
+    all_candidate_data = data["kathmandu"]["constituency : 8"]
+    candidates_filter = [
+        "Suman Sayami",
+        "Biraj Bhakta Shrestha",
+        "Shiv Sundar Rajabhaidha",
+        "Jeewan Ram Shrestha",
+    ]
+    filtered_candiate_data = filter_data(all_candidate_data, candidates_filter)
+    counted_votes = sum_total(all_candidate_data)
+    # Add up invalid votes through percentage guess
+    corrected_counted_votes = int(counted_votes + 0.2 * counted_votes) + 1
+    # Lookup newspaper to get this number estimate by ECN
+    # total_votes = 0
+    # vote_percentage = round((counted_votes / total_votes) * 100, 2)
+    return {
+        "candidates": filtered_candiate_data,
+        "vote_counted": corrected_counted_votes,
+        # "percentage": vote_percentage,
+        # "total_votes": total_votes,
+    }
+
+
 def rauthat_one_votes(data):
     all_candidate_data = data["rauthat"]["constituency : 1"]
     candidates_filter = [
@@ -361,5 +384,5 @@ if __name__ == "__main__":
     pprint(jhapa_three_votes(data))
     pprint(saptari_two_votes(data))
     pprint(westnawalparasi_one_votes(data))
-    pprint(rauthat_one_votes(data))
+    pprint(kathmandu_eight_votes(data))
     pprint(get_summary_data())
