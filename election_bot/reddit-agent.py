@@ -13,6 +13,7 @@ from parser import (
     kathmandu_one_votes,
     kathmandu_seven_votes,
     lalitpur_three_votes,
+    lalitpur_two_votes,
     party_shortform,
     saptari_two_votes,
 )
@@ -58,6 +59,7 @@ def main():
         "Kathmandu 4": partial(kathmandu_four_votes, api_data),
         "Kathmandu 7": partial(kathmandu_seven_votes, api_data),
         "Lalitpur 3": partial(lalitpur_three_votes, api_data),
+        "Lalitpur 2": partial(lalitpur_two_votes, api_data),
         "Jhapa 3": partial(jhapa_three_votes, api_data),
         "Saptari 2": partial(saptari_two_votes, api_data),
         "Bhaktapur 2": partial(bhaktapur_two_votes, api_data),
@@ -204,4 +206,4 @@ def gen_msg(city, data, concat_name=False):
 if __name__ == "__main__":
     while True:
         main()
-        time.sleep(30)
+        time.sleep(60)
