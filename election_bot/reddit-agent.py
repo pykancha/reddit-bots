@@ -206,7 +206,8 @@ def gen_msg(city, data, concat_name=False):
     if data.get("total_votes", 0) and data.get("percentage", 0):
         voter_stat = f"- **Vote counted**: {data['percentage']}% ({data['vote_counted']:,} of {data['total_votes']:,})"
     elif data.get("vote_counted", 0) <= 1:
-        voter_stat += f"- **Vote counting not started yet.**"
+        return ""
+        # voter_stat += f"- **Vote counting not started yet.**"
     if city == "Kathmandu 1":
         voter_stat += f"- **Prakashman Singh wins by 125 votes margin.**"
 
