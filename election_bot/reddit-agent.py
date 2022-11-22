@@ -259,4 +259,4 @@ def gen_msg(city, data, concat_name=False):
 if __name__ == "__main__":
     while True:
         main()
-        time.sleep(random.randint(50, 70))
+        time.sleep(random.randint(120, 200))
