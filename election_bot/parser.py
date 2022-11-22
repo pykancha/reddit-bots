@@ -1,4 +1,5 @@
 import datetime
+import time
 
 import requests
 
@@ -29,6 +30,7 @@ def get_data(places_list):
         print("Requesting at ", bulk_url)
         data = request_url(bulk_url)
         all_data.update(data)
+        time.sleep(1)
     return all_data
 
 
