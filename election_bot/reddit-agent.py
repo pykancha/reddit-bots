@@ -1,4 +1,5 @@
 import os
+import random
 import time
 from functools import partial
 from parser import (
@@ -71,7 +72,11 @@ def login(username):
 
 
 def main():
-    summary_data = get_summary_data()
+    try:
+        summary_data = get_summary_data()
+    except Exception as e:
+        print("Failed getting summary", e)
+
     api_data = get_data(FETCH_LIST)
     election_area_map = {
         "Dadeldhura 1": partial(dadeldura_one_votes, api_data),
@@ -115,7 +120,7 @@ def main():
     footer = (
         "*contribute*: "
         "[Bot code](https://github.com/pykancha/reddit-bots) |"
-        "[API code](https://github.com/hemanta212/nepal-election-api) |"
+        "[API code](https://github.com/pykancha/election-api) |"
         "[API url for your personal automation](https://electionapi.osac.org.np)"
     )
     text = ""
@@ -240,4 +245,4 @@ def gen_msg(city, data, concat_name=False):
 if __name__ == "__main__":
     while True:
         main()
-        time.sleep(60)
+        time.sleep(random.randint(50, 70))
