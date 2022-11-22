@@ -20,6 +20,7 @@ from parser import (
     kathmandu_seven_votes,
     kathmandu_six_votes,
     kathmandu_two_votes,
+    kavre_two_votes,
     lalitpur_three_votes,
     lalitpur_two_votes,
     mahottari_three_votes,
@@ -54,6 +55,7 @@ FETCH_LIST = [
     "pradesh-2/district-mahottari",
     "pradesh-5/district-rupandehi",
     "pradesh-5/district-dang",
+    "pradesh-3/district-kavrepalanchowk",
 ]
 
 
@@ -86,6 +88,7 @@ def main():
         "Kathmandu 6": partial(kathmandu_six_votes, api_data),
         "Kathmandu 8": partial(kathmandu_eight_votes, api_data),
         "Rupandehi 2": partial(rupandehi_two_votes, api_data),
+        "Kavre 2": partial(kavre_two_votes, api_data),
         "Rauthat 2": partial(rauthat_two_votes, api_data),
         "Lalitpur 3": partial(lalitpur_three_votes, api_data),
         "Jhapa 4": partial(jhapa_four_votes, api_data),

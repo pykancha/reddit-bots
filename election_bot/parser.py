@@ -86,6 +86,28 @@ def dhading_one_votes(data):
     }
 
 
+def kavre_two_votes(data):
+    all_candidate_data = data["kavrepalanchowk"]["constituency : 2"]
+    candidates_filter = [
+        "Shiva Prasad Humagain",
+        "Gokul Prasad Baskota",
+        "Dinesh Humagain",
+    ]
+    filtered_candiate_data = filter_data(all_candidate_data, candidates_filter)
+    counted_votes = sum_total(all_candidate_data)
+    # Add up invalid votes through percentage guess
+    corrected_counted_votes = int(counted_votes + 0.2 * counted_votes) + 1
+    # Lookup newspaper to get this number estimate by ECN
+    # total_votes = 0
+    # vote_percentage = round((counted_votes / total_votes) * 100, 2)
+    return {
+        "candidates": filtered_candiate_data,
+        "vote_counted": corrected_counted_votes,
+        # "percentage": vote_percentage,
+        # "total_votes": total_votes,
+    }
+
+
 def morang_six_votes(data):
     all_candidate_data = data["morang"]["constituency : 6"]
     candidates_filter = [
@@ -636,21 +658,9 @@ if __name__ == "__main__":
     data = get_data(
         [
             "pradesh-7/district-dadeldhura",
-            "pradesh-1/district-jhapa",
-            "pradesh-3/district-dhading",
-            "pradesh-1/district-morang",
-            "pradesh-2/district-mahottari",
-            "pradesh-2/district-rauthat",
-            "pradesh-5/district-rupandehi",
-            "pradesh-5/district-dang",
+            "pradesh-3/district-kavrepalanchowk",
         ]
     )
     pprint(dadeldura_one_votes(data))
-    pprint(dhading_one_votes(data))
-    pprint(morang_six_votes(data))
-    pprint(mahottari_three_votes(data))
-    pprint(rupandehi_two_votes(data))
-    pprint(rauthat_two_votes(data))
-    pprint(jhapa_three_votes(data))
-    pprint(jhapa_four_votes(data))
+    pprint(kavre_two_votes(data))
     pprint(get_summary_data())
