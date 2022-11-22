@@ -87,8 +87,8 @@ def main():
         "Kathmandu 8": partial(kathmandu_eight_votes, api_data),
         "Rupandehi 2": partial(rupandehi_two_votes, api_data),
         "Rauthat 2": partial(rauthat_two_votes, api_data),
-        "Jhapa 4": partial(jhapa_four_votes, api_data),
         "Lalitpur 3": partial(lalitpur_three_votes, api_data),
+        "Jhapa 4": partial(jhapa_four_votes, api_data),
         "Kathmandu 7": partial(kathmandu_seven_votes, api_data),
         "Jhapa 2": partial(jhapa_two_votes, api_data),
         "Dhading 1": partial(dhading_one_votes, api_data),
@@ -212,6 +212,10 @@ def gen_msg(city, data, concat_name=False):
         # voter_stat += f"- **Vote counting not started yet.**"
     if city == "Kathmandu 1":
         voter_stat += f"- **Prakashman Singh wins by 125 votes margin.**"
+    if city == "Kathmandu 4":
+        voter_stat += f"- **Gagan Kumar Thapa wins by a comfortable margin.**"
+    if city == "Lalitpur 2":
+        voter_stat += f"- **Prem Bahadur Maharjan wins.**"
 
     metadata = f"# {city}\n{voter_stat}\n\n"
 
