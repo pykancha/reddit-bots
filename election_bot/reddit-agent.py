@@ -204,6 +204,13 @@ def gen_msg(city, data, concat_name=False):
 
     voter_stat = ""
     footer = ""
+    winner = ""
+    try:
+        winner_declared = data.get("candidates")[0]["winner_declared"]
+        if winner_declared:
+            winner = data["candidates"][0]["name"]
+    except Exception as e:
+        print("Cannot find winner declared text", e)
 
     if data.get("total_votes", 0) and data.get("percentage", 0):
         voter_stat = f"- **Vote counted**: {data['percentage']}% ({data['vote_counted']:,} of {data['total_votes']:,})"
@@ -212,10 +219,10 @@ def gen_msg(city, data, concat_name=False):
         # voter_stat += f"- **Vote counting not started yet.**"
     if city == "Kathmandu 1":
         voter_stat += f"- **Prakashman Singh wins by 125 votes margin.**"
-    if city == "Kathmandu 4":
+    elif city == "Kathmandu 4":
         voter_stat += f"- **Gagan Kumar Thapa wins by a comfortable margin.**"
-    if city == "Lalitpur 2":
-        voter_stat += f"- **Prem Bahadur Maharjan wins.**"
+    elif winner:
+        voter_stat += f"- **{winner} wins.**"
 
     metadata = f"# {city}\n{voter_stat}\n\n"
 
