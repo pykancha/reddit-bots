@@ -6,11 +6,30 @@ url = "http://localhost:8090"
 
 
 def get_data(places_list):
-    bulk_list_arg = ",".join(places_list)
-    bulk_url = f"{url}/bulk?list={bulk_list_arg}"
-    print("Requesting at ", bulk_url)
-    data = request_url(bulk_url)
-    return data
+    all_places = []
+    if len(places_list) >= 12:
+        all_places.extend(
+            [
+                places_list[:3],
+                places_list[3:6],
+                places_list[6:9],
+                places_list[9:11],
+                places_list[11:],
+            ]
+        )
+    elif len(places_list) >= 5:
+        all_places.extend([places_list[:3], places_list[3:]])
+    else:
+        all_places.append(places_list)
+
+    all_data = {}
+    for places_list in all_places:
+        bulk_list_arg = ",".join(places_list)
+        bulk_url = f"{url}/bulk?list={bulk_list_arg}"
+        print("Requesting at ", bulk_url)
+        data = request_url(bulk_url)
+        all_data.update(data)
+    return all_data
 
 
 def get_summary_data():

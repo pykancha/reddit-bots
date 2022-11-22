@@ -27,7 +27,6 @@ from parser import (
     rauthat_one_votes,
     rauthat_two_votes,
     rupandehi_two_votes,
-    saptari_two_votes,
     westnawalparasi_one_votes,
 )
 
@@ -46,7 +45,6 @@ FETCH_LIST = [
     "pradesh-3/district-bhaktapur",
     "pradesh-3/district-lalitpur",
     "pradesh-3/district-chitwan",
-    "pradesh-2/district-saptari",
     "pradesh-2/district-rauthat",
     "pradesh-1/district-jhapa",
     "pradesh-5/district-nawalparasiwest",
@@ -73,6 +71,7 @@ def login(username):
 
 
 def main():
+    summary_data = get_summary_data()
     api_data = get_data(FETCH_LIST)
     election_area_map = {
         "Dadeldhura 1": partial(dadeldura_one_votes, api_data),
@@ -96,7 +95,6 @@ def main():
         "Lalitpur 2": partial(lalitpur_two_votes, api_data),
         "Mahottari 3": partial(mahottari_three_votes, api_data),
         "Jhapa 3": partial(jhapa_three_votes, api_data),
-        "Saptari 2": partial(saptari_two_votes, api_data),
         "Bhaktapur 2": partial(bhaktapur_two_votes, api_data),
     }
 
@@ -122,7 +120,6 @@ def main():
     )
     text = ""
     print("Started fetching at: ", get_current_time())
-    summary_data = get_summary_data()
     try:
         text += gen_summary_msg(summary_data)
     except Exception as e:
