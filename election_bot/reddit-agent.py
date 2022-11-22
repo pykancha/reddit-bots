@@ -5,6 +5,7 @@ from parser import (
     bhaktapur_two_votes,
     chitwan_two_votes,
     dadeldura_one_votes,
+    dhading_one_votes,
     get_current_time,
     get_data,
     get_summary_data,
@@ -20,8 +21,12 @@ from parser import (
     kathmandu_two_votes,
     lalitpur_three_votes,
     lalitpur_two_votes,
+    mahottari_three_votes,
+    morang_six_votes,
     party_shortform,
     rauthat_one_votes,
+    rauthat_two_votes,
+    rupandehi_two_votes,
     saptari_two_votes,
     westnawalparasi_one_votes,
 )
@@ -30,8 +35,8 @@ import praw
 from dotenv import load_dotenv
 
 USERNAME = "election-bot-2079"
-# SUBMISSION_IDS = ["upmnp6"]
-SUBMISSION_IDS = ["z0opw6"]
+SUBMISSION_IDS = ["upmnp6"]
+# SUBMISSION_IDS = ["z0opw6"]
 
 load_dotenv()
 
@@ -45,6 +50,11 @@ FETCH_LIST = [
     "pradesh-2/district-rauthat",
     "pradesh-1/district-jhapa",
     "pradesh-5/district-nawalparasiwest",
+    "pradesh-3/district-dhading",
+    "pradesh-1/district-morang",
+    "pradesh-2/district-mahottari",
+    "pradesh-5/district-rupandehi",
+    "pradesh-5/district-dang",
 ]
 
 
@@ -71,15 +81,20 @@ def main():
         "Kathmandu 2": partial(kathmandu_two_votes, api_data),
         "Kathmandu 6": partial(kathmandu_six_votes, api_data),
         "Kathmandu 8": partial(kathmandu_eight_votes, api_data),
+        "Rupandehi 2": partial(rupandehi_two_votes, api_data),
+        "Rauthat 2": partial(rauthat_two_votes, api_data),
         "Jhapa 4": partial(jhapa_four_votes, api_data),
         "Lalitpur 3": partial(lalitpur_three_votes, api_data),
         "Kathmandu 7": partial(kathmandu_seven_votes, api_data),
         "Jhapa 2": partial(jhapa_two_votes, api_data),
+        "Dhading 1": partial(dhading_one_votes, api_data),
         "Rauthat 1": partial(rauthat_one_votes, api_data),
+        "Morang 6": partial(morang_six_votes, api_data),
         "Kathmandu 4": partial(kathmandu_four_votes, api_data),
         "Kathmandu 5": partial(kathmandu_five_votes, api_data),
         "West Nawalparasi 1": partial(westnawalparasi_one_votes, api_data),
         "Lalitpur 2": partial(lalitpur_two_votes, api_data),
+        "Mahottari 3": partial(mahottari_three_votes, api_data),
         "Jhapa 3": partial(jhapa_three_votes, api_data),
         "Saptari 2": partial(saptari_two_votes, api_data),
         "Bhaktapur 2": partial(bhaktapur_two_votes, api_data),
@@ -192,6 +207,8 @@ def gen_msg(city, data, concat_name=False):
         voter_stat = f"- **Vote counted**: {data['percentage']}% ({data['vote_counted']:,} of {data['total_votes']:,})"
     elif data.get("vote_counted", 0) <= 1:
         voter_stat += f"- **Vote counting not started yet.**"
+    if city == "Kathmandu 1":
+        voter_stat += f"- **Prakashman Singh wins by 125 votes margin.**"
 
     metadata = f"# {city}\n{voter_stat}\n\n"
 

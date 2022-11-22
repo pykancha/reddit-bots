@@ -43,6 +43,94 @@ def dadeldura_one_votes(data):
     }
 
 
+def dhading_one_votes(data):
+    all_candidate_data = data["dhading"]["constituency : 1"]
+    candidates_filter = [
+        "Rajendra Prasad Pandey",
+        "Bhumi Prasad Tripathi",
+        "Himesh Panta",
+    ]
+    filtered_candiate_data = filter_data(all_candidate_data, candidates_filter)
+    counted_votes = sum_total(all_candidate_data)
+    # Add up invalid votes through percentage guess
+    corrected_counted_votes = int(counted_votes + 0.2 * counted_votes) + 1
+    # Lookup newspaper to get this number estimate by ECN
+    # total_votes = 0
+    # vote_percentage = round((counted_votes / total_votes) * 100, 2)
+    return {
+        "candidates": filtered_candiate_data,
+        "vote_counted": corrected_counted_votes,
+        # "percentage": vote_percentage,
+        # "total_votes": total_votes,
+    }
+
+
+def morang_six_votes(data):
+    all_candidate_data = data["morang"]["constituency : 6"]
+    candidates_filter = [
+        "Dr. Shekhar Koirala",
+        "Lal Babu Pandit",
+        "Yadav Kumar Pradhan",
+    ]
+    filtered_candiate_data = filter_data(all_candidate_data, candidates_filter)
+    counted_votes = sum_total(all_candidate_data)
+    # Add up invalid votes through percentage guess
+    corrected_counted_votes = int(counted_votes + 0.2 * counted_votes) + 1
+    # Lookup newspaper to get this number estimate by ECN
+    # total_votes = 0
+    # vote_percentage = round((counted_votes / total_votes) * 100, 2)
+    return {
+        "candidates": filtered_candiate_data,
+        "vote_counted": corrected_counted_votes,
+        # "percentage": vote_percentage,
+        # "total_votes": total_votes,
+    }
+
+
+def mahottari_three_votes(data):
+    all_candidate_data = data["mahottari"]["constituency : 3"]
+    candidates_filter = [
+        "Ram Aadhar Kapar",
+        "Mahantha Thakur",
+        "Hari Narayan Yadav",
+    ]
+    filtered_candiate_data = filter_data(all_candidate_data, candidates_filter)
+    counted_votes = sum_total(all_candidate_data)
+    # Add up invalid votes through percentage guess
+    corrected_counted_votes = int(counted_votes + 0.2 * counted_votes) + 1
+    # Lookup newspaper to get this number estimate by ECN
+    # total_votes = 0
+    # vote_percentage = round((counted_votes / total_votes) * 100, 2)
+    return {
+        "candidates": filtered_candiate_data,
+        "vote_counted": corrected_counted_votes,
+        # "percentage": vote_percentage,
+        # "total_votes": total_votes,
+    }
+
+
+def rupandehi_two_votes(data):
+    all_candidate_data = data["rupandehi"]["constituency : 2"]
+    candidates_filter = [
+        "Ganesh Paudel",
+        "Bishnu Prasad Paudel",
+        "Keshav Bahadur Thapa Magar",
+    ]
+    filtered_candiate_data = filter_data(all_candidate_data, candidates_filter)
+    counted_votes = sum_total(all_candidate_data)
+    # Add up invalid votes through percentage guess
+    corrected_counted_votes = int(counted_votes + 0.2 * counted_votes) + 1
+    # Lookup newspaper to get this number estimate by ECN
+    # total_votes = 0
+    # vote_percentage = round((counted_votes / total_votes) * 100, 2)
+    return {
+        "candidates": filtered_candiate_data,
+        "vote_counted": corrected_counted_votes,
+        # "percentage": vote_percentage,
+        # "total_votes": total_votes,
+    }
+
+
 def lalitpur_three_votes(data):
     all_candidate_data = data["lalitpur"]["constituency : 3"]
     candidates_filter = [
@@ -211,6 +299,27 @@ def rauthat_one_votes(data):
         "Madhav Kumar Nepal",
         "Ajay Kumar Gupta",
         "Rajendra Prasad Shah",
+    ]
+    filtered_candiate_data = filter_data(all_candidate_data, candidates_filter)
+    counted_votes = sum_total(all_candidate_data)
+    # Add up invalid votes through percentage guess
+    corrected_counted_votes = int(counted_votes + 0.2 * counted_votes) + 1
+    # Lookup newspaper to get this number estimate by ECN
+    # total_votes = 0
+    # vote_percentage = round((counted_votes / total_votes) * 100, 2)
+    return {
+        "candidates": filtered_candiate_data,
+        "vote_counted": corrected_counted_votes,
+        # "percentage": vote_percentage,
+        # "total_votes": total_votes,
+    }
+
+
+def rauthat_two_votes(data):
+    all_candidate_data = data["rauthat"]["constituency : 2"]
+    candidates_filter = [
+        "Kiran Kumar Shah",
+        "Mo. Firdos Alam",
     ]
     filtered_candiate_data = filter_data(all_candidate_data, candidates_filter)
     counted_votes = sum_total(all_candidate_data)
@@ -436,14 +545,26 @@ def filter_data(data, filter):
         if name.split(" ")[0] in filter or name.strip() in filter:
             if name == "Ashmita Singh (Manusi) Yami Bhattarai":
                 data_dict["name"] = "Manusi Yami Bhattarai"
-            if name == "Chandra Kanta Raut":
+            elif name == "Chandra Kanta Raut":
                 data_dict["name"] = "Chandra Kanta (C.K) Raut"
-            if name == "Ranju Neupane":
+            elif name == "Ranju Neupane":
                 data_dict["name"] = "Ranju Darsana"
-            if name == "Dr.Pranaya Shemser Rana":
+            elif name == "Dr.Pranaya Shemser Rana":
                 data_dict["name"] = "Pranaya Shumsher"
-            if name == "Bhadra Prasad Nepal":
+            elif name == "Bhadra Prasad Nepal":
                 data_dict["name"] = "Swagat Nepal"
+            elif name == "Bishnu Prasad Paudel":
+                data_dict["name"] = "Bisnu Paudel"
+            elif name == "Keshav Bahadur Thapa Magar":
+                data_dict["name"] = "Keshav Magar"
+            elif name == "Krishna Bhakta Pokhrel":
+                data_dict["name"] = "Krishna Pokhrel"
+            elif name == "Hari Kumar Rana Magar":
+                data_dict["name"] = "Hari Magar"
+            elif name == "Binod Kumar Chaudhary":
+                data_dict["name"] = "Binod Chaudhary"
+            elif name == "Mahendra Sen (Thakuri)":
+                data_dict["name"] = "Mahendra Sen"
             results.append(data_dict)
             continue
     return results
@@ -495,10 +616,20 @@ if __name__ == "__main__":
         [
             "pradesh-7/district-dadeldhura",
             "pradesh-1/district-jhapa",
+            "pradesh-3/district-dhading",
+            "pradesh-1/district-morang",
+            "pradesh-2/district-mahottari",
+            "pradesh-2/district-rauthat",
+            "pradesh-5/district-rupandehi",
+            "pradesh-5/district-dang",
         ]
     )
     pprint(dadeldura_one_votes(data))
-    pprint(jhapa_two_votes(data))
+    pprint(dhading_one_votes(data))
+    pprint(morang_six_votes(data))
+    pprint(mahottari_three_votes(data))
+    pprint(rupandehi_two_votes(data))
+    pprint(rauthat_two_votes(data))
     pprint(jhapa_three_votes(data))
     pprint(jhapa_four_votes(data))
     pprint(get_summary_data())
