@@ -111,6 +111,7 @@ def main():
         "**Election Data Source**: https://election.ekantipur.com?lng=eng\n\n"
         "**All Party/Candidates PowerBi Visualization by u/authorsuraj**: [PowerBi Link](https://app.powerbi.com/view?r=eyJrIjoiNTU4NDY2YTYtMDU0MS00M2I5LWJjMTAtZGY5MGE5M2IyNGE3IiwidCI6ImNiNzIwMDNkLWYwMjctNDgwMC1hMWZkLTYwYzVmYjRmYmU0OCJ9&pageName=ReportSection)\n\n"
         "**Official And Detailed Election Data**: [Official ECN website](https://result.election.gov.np/ElectionResultCentral2079.aspx)\n\n"
+        "**Proportional Vote counts**: [ECN proportional count](https://result.election.gov.np/PRVoteChartResult.aspx)\n\n"
         f"**Last updated**: {get_current_time()} (UTC: {get_current_time(utc=True)})\n\n"
     )
     news = (
