@@ -379,6 +379,28 @@ def rauthat_two_votes(data):
     }
 
 
+def eastnawalparasi_one_votes(data):
+    all_candidate_data = data["nawalparasieast"]["constituency : 1"]
+    candidates_filter = [
+        "Shashank Koirala",
+        "Rajan Gautam",
+        "Krishna Prasad Paudel",
+    ]
+    filtered_candiate_data = filter_data(all_candidate_data, candidates_filter)
+    counted_votes = sum_total(all_candidate_data)
+    # Add up invalid votes through percentage guess
+    corrected_counted_votes = int(counted_votes + 0.2 * counted_votes) + 1
+    # Lookup newspaper to get this number estimate by ECN
+    # total_votes = 0
+    # vote_percentage = round((counted_votes / total_votes) * 100, 2)
+    return {
+        "candidates": filtered_candiate_data,
+        "vote_counted": corrected_counted_votes,
+        # "percentage": vote_percentage,
+        # "total_votes": total_votes,
+    }
+
+
 def westnawalparasi_one_votes(data):
     all_candidate_data = data["nawalparasiwest"]["constituency : 1"]
     candidates_filter = [
