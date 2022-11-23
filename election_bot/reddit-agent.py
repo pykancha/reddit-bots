@@ -51,6 +51,7 @@ FETCH_LIST = [
     "pradesh-2/district-rauthat",
     "pradesh-1/district-jhapa",
     "pradesh-5/district-nawalparasiwest",
+    "pradesh-4/district-nawalparasieast",
     "pradesh-3/district-dhading",
     "pradesh-1/district-morang",
     "pradesh-2/district-mahottari",

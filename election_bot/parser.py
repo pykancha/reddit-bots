@@ -679,10 +679,8 @@ if __name__ == "__main__":
 
     data = get_data(
         [
-            "pradesh-7/district-dadeldhura",
-            "pradesh-3/district-kavrepalanchowk",
+            "pradesh-4/district-nawalparasieast",
         ]
     )
-    pprint(dadeldura_one_votes(data))
-    pprint(kavre_two_votes(data))
+    pprint(eastnawalparasi_one_votes(data))
     pprint(get_summary_data())
