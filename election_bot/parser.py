@@ -597,7 +597,7 @@ def filter_data(data, filter):
             elif name == "Bhadra Prasad Nepal":
                 data_dict["name"] = "Swagat Nepal"
             elif name == "Bishnu Prasad Paudel":
-                data_dict["name"] = "Bisnu Paudel"
+                data_dict["name"] = "Bishnu Paudel"
             elif name == "Keshav Bahadur Thapa Magar":
                 data_dict["name"] = "Keshav Magar"
             elif name == "Krishna Bhakta Pokhrel":
