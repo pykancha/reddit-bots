@@ -137,7 +137,6 @@ def main():
         except Exception as e:
             print("Failed generating text, Skipping this time", e, city)
             return
-        time.sleep(1)
     print("Info fetched completed at: ", get_current_time())
 
     submission_body = f"{text}\n\n\n\n{footer}"
@@ -200,7 +199,6 @@ def gen_msg(city, data, concat_name=False):
         data = data()
     except Exception as e:
         print("Scraper error", e)
-        time.sleep(5)
         data = data()
 
     voter_stat = ""
