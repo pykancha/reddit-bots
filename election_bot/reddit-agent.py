@@ -40,8 +40,8 @@ import praw
 from dotenv import load_dotenv
 
 USERNAME = "election-bot-2079"
-SUBMISSION_IDS = ["upmnp6"]
-# SUBMISSION_IDS = ["z0opw6"]
+# SUBMISSION_IDS = ["upmnp6"]
+SUBMISSION_IDS = ["z0opw6"]
 
 load_dotenv()
 
