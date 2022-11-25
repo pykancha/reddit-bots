@@ -112,30 +112,30 @@ def main():
 
     election_area_map = {
         "Sunsari 1": partial(sunsari_one_votes, api_data),
-        "Gulmi 2": partial(gulmi_two_votes, api_data),
-        "Rupandehi 2": partial(rupandehi_two_votes, api_data),
-        "Kavre 2": partial(kavre_two_votes, api_data),
         "Mahottari 3": partial(mahottari_three_votes, api_data),
+        "Rupandehi 2": partial(rupandehi_two_votes, api_data),
+        "Dadeldhura 1": partial(dadeldura_one_votes, api_data),
         "Chitwan 2": partial(chitwan_two_votes, api_data),
+        "Kathmandu 1": partial(kathmandu_one_votes, api_data),
+        "Kathmandu 2": partial(kathmandu_two_votes, api_data),
+        "Kathmandu 4": partial(kathmandu_four_votes, api_data),
+        "Kathmandu 5": partial(kathmandu_five_votes, api_data),
         "Kathmandu 6": partial(kathmandu_six_votes, api_data),
-        "Rauthat 2": partial(rauthat_two_votes, api_data),
+        "Kathmandu 7": partial(kathmandu_seven_votes, api_data),
+        "Kathmandu 8": partial(kathmandu_eight_votes, api_data),
         "Lalitpur 3": partial(lalitpur_three_votes, api_data),
+        "Lalitpur 2": partial(lalitpur_two_votes, api_data),
+        "Bhaktapur 2": partial(bhaktapur_two_votes, api_data),
+        "West Nawalparasi 1": partial(westnawalparasi_one_votes, api_data),
+        "Gulmi 2": partial(gulmi_two_votes, api_data),
+        "Kavre 2": partial(kavre_two_votes, api_data),
+        "Rauthat 2": partial(rauthat_two_votes, api_data),
         "Jhapa 2": partial(jhapa_two_votes, api_data),
         "East Nawalparasi 1": partial(eastnawalparasi_one_votes, api_data),
         "Dhading 1": partial(dhading_one_votes, api_data),
         "Rauthat 1": partial(rauthat_one_votes, api_data),
         "Morang 6": partial(morang_six_votes, api_data),
-        "West Nawalparasi 1": partial(westnawalparasi_one_votes, api_data),
         "Jhapa 3": partial(jhapa_three_votes, api_data),
-        "Bhaktapur 2": partial(bhaktapur_two_votes, api_data),
-        "Dadeldhura 1": partial(dadeldura_one_votes, api_data),
-        "Kathmandu 1": partial(kathmandu_one_votes, api_data),
-        "Kathmandu 2": partial(kathmandu_two_votes, api_data),
-        "Kathmandu 8": partial(kathmandu_eight_votes, api_data),
-        "Kathmandu 7": partial(kathmandu_seven_votes, api_data),
-        "Kathmandu 4": partial(kathmandu_four_votes, api_data),
-        "Kathmandu 5": partial(kathmandu_five_votes, api_data),
-        "Lalitpur 2": partial(lalitpur_two_votes, api_data),
     }
 
     source = (
@@ -223,7 +223,7 @@ def gen_summary_msg(data):
 
 def gen_pr_msg(data):
     # Pr votes Format
-    title = "# Pr Votes Summary\n"
+    title = "# Proportional Votes\n"
     header = "Party|Votes|\n:--:|:--:|\n"
     parties = []
     for index, party_info in enumerate(data):
