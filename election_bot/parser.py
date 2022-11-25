@@ -41,6 +41,13 @@ def get_summary_data():
     return data
 
 
+def get_pr_data():
+    pr_url = f"{url}/pr"
+    print("Requesting at ", pr_url)
+    data = request_url(pr_url)
+    return data
+
+
 def request_url(url):
     response = requests.get(url)
     return response.json()
@@ -130,8 +137,6 @@ def sunsari_one_votes(data):
         # "percentage": vote_percentage,
         # "total_votes": total_votes,
     }
-
-
 
 
 

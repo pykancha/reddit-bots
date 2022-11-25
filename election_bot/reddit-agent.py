@@ -11,6 +11,7 @@ from parser import (
     get_current_time,
     get_data,
     get_summary_data,
+    get_pr_data,
     jhapa_four_votes,
     jhapa_three_votes,
     jhapa_two_votes,
@@ -79,12 +80,36 @@ def login(username):
 
 
 def main():
+    main_body_text = ""
+
+    print("Started fetching at: ", get_current_time())
     try:
         summary_data = get_summary_data()
     except Exception as e:
         print("Failed getting summary", e)
 
+    try:
+        main_body_text += gen_summary_msg(summary_data)
+    except Exception as e:
+        print("Failed generating summary, Skipping this time", e)
+    else:
+        print("Generated Summary message")
+
+    try:
+        pr_data = get_pr_data()
+    except Exception as e:
+        print("Failed getting pr votes", e)
+
+    try:
+        main_body_text += gen_pr_msg(pr_data)
+    except Exception as e:
+        print("Failed generating pr votes table, Skipping this time", e)
+    else:
+        print("Generated Pr message")
+
+
     api_data = get_data(FETCH_LIST)
+
     election_area_map = {
         "Sunsari 1": partial(sunsari_one_votes, api_data),
         "Gulmi 2": partial(gulmi_two_votes, api_data),
@@ -131,22 +156,17 @@ def main():
         "[Bot code](https://github.com/pykancha/reddit-bots) |"
         "[API code](https://github.com/pykancha/election-api) |"
     )
-    text = ""
-    print("Started fetching at: ", get_current_time())
-    try:
-        text += gen_summary_msg(summary_data)
-    except Exception as e:
-        print("Failed generating summary, Skipping this time", e)
 
     for city, data in election_area_map.items():
         try:
-            text += gen_msg(city, data)
+            main_body_text += gen_msg(city, data)
         except Exception as e:
             print("Failed generating text, Skipping this time", e, city)
             return
+
     print("Info fetched completed at: ", get_current_time())
 
-    submission_body = f"{text}\n\n\n\n{footer}"
+    submission_body = f"{main_body_text}\n\n\n\n{footer}"
     cached_submission = ""
     try:
         with open("cache.json", "r") as rf:
@@ -163,7 +183,7 @@ def main():
     with open("cache.json", "w") as wf:
         wf.write(submission_body)
 
-    submission_body = f"{source}\n\n{text}\n\n\n\n{footer}"
+    submission_body = f"{source}\n\n{main_body_text}\n\n\n\n{footer}"
 
     reddit = login(USERNAME)
     submissions = [reddit.submission(i) for i in SUBMISSION_IDS]
@@ -199,6 +219,19 @@ def gen_summary_msg(data):
         )
     summary_info = title + header + "\n".join(parties)
     return f"{summary_info}\n\n"
+
+
+def gen_pr_msg(data):
+    # Pr votes Format
+    title = "# Pr Votes Summary\n"
+    header = "Party|Votes|\n:--:|:--:|\n"
+    parties = []
+    for index, party_info in enumerate(data):
+        parties.append(
+            f"{party_info['name']} | {int(party_info['votes']):,}"
+        )
+    pr_info = title + header + "\n".join(parties)
+    return f"{pr_info}\n\n"
 
 
 def gen_msg(city, data, concat_name=False):
