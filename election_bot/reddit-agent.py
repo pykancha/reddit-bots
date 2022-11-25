@@ -232,13 +232,14 @@ def gen_pr_msg(data):
     metadata = f"**Votes counted**: {counted_votes:,} ~({counted_percent})%\n\n**Remaining Votes**: {(total_voters-counted_votes):,}\n\n"
     parties = []
 
+    party = lambda x: "Hamro Nepali Party (Lauro)" if x == "Hamro Nepali Party" else x
     make_int = lambda x: int("".join(x.split(",")))
     vote_percent = lambda x: round((make_int(x["votes"]) / counted_votes) * 100, 1)
     vote_percent_total = lambda x: round((make_int(x["votes"]) / total_voters) * 100, 1)
 
     for index, party_info in enumerate(data[:12]):
         parties.append(
-            f"{party_info['name']} | {party_info['votes']} | {vote_percent(party_info)}% | {vote_percent_total(party_info)}%"
+            f"{party(party_info['name'])} | {party_info['votes']} | {vote_percent(party_info)}% | {vote_percent_total(party_info)}%"
         )
     pr_info = title + metadata + header + "\n".join(parties)
     return f"{pr_info}\n\n"
