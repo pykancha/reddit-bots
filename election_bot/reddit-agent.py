@@ -40,8 +40,8 @@ import praw
 from dotenv import load_dotenv
 
 USERNAME = "election-bot-2079"
-# SUBMISSION_IDS = ["upmnp6"]
-SUBMISSION_IDS = ["z0opw6"]
+SUBMISSION_IDS = ["upmnp6"]
+# SUBMISSION_IDS = ["z0opw6"]
 
 load_dotenv()
 
@@ -228,7 +228,7 @@ def gen_pr_msg(data):
     parties = []
     for index, party_info in enumerate(data):
         parties.append(
-            f"{party_info['name']} | {int(party_info['votes']):,}"
+            f"{party_info['name']} | {party_info['votes']}"
         )
     pr_info = title + header + "\n".join(parties)
     return f"{pr_info}\n\n"
@@ -266,9 +266,11 @@ def gen_msg(city, data, concat_name=False):
     metadata = f"# {city}\n{voter_stat}\n\n"
 
     # Utils functions
+    make_int = lambda x: int("".join(x.split(",")))
     get_name = lambda x: x["name"] if not concat_name else x["name"].split(" ")[0]
     party = lambda x: party_shortform(x["party"])
-    vote_percent = lambda x: round((int(x["votes"]) / data["vote_counted"]) * 100, 1)
+    vote_percent = lambda x: round((make_int(x["votes"]) / data["vote_counted"]) * 100, 1)
+
 
     # Candidate format
     header = "Candidate|Party|Votes|Percentage|\n:--:|:--:|:--:|:--:|\n"
@@ -277,12 +279,12 @@ def gen_msg(city, data, concat_name=False):
         vote_diff = ""
         if index == 0:
             try:
-                second_candidate_votes = int(data["candidates"][1]["votes"])
-                vote_diff = f"  (+ {(int(d['votes']) - second_candidate_votes):,}) "
+                second_candidate_votes = make_int(data["candidates"][1]["votes"])
+                vote_diff = f"  (+ {(make_int(d['votes']) - second_candidate_votes):,}) "
             except Exception as e:
                 print("Vote diff calc error", e, d["name"])
         candidates.append(
-            f"{get_name(d)} | {party(d)} | {int(d['votes']):,}{vote_diff} | {vote_percent(d)}%"
+            f"{get_name(d)} | {party(d)} | {d['votes']}{vote_diff} | {vote_percent(d)}%"
         )
 
     candidate_info = metadata + header + "\n".join(candidates)

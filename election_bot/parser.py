@@ -706,11 +706,12 @@ def party_shortform(partyname):
 
 def sum_total(data):
     total = 0
+    make_int = lambda x: int("".join(x.split(",")))
     for data_dict in data:
         vote_no = 0
         if data_dict.get("votes", False):
             try:
-                vote_no = int(data_dict.get("votes", "0"))
+                vote_no = make_int(data_dict.get("votes", "0"))
             except Exception as e:
                 print("Voter total error", e, data_dict)
                 pass
