@@ -11,6 +11,7 @@ from parser import (
     get_current_time,
     get_data,
     get_summary_data,
+    sum_total,
     get_pr_data,
     jhapa_four_votes,
     jhapa_three_votes,
@@ -224,13 +225,21 @@ def gen_summary_msg(data):
 def gen_pr_msg(data):
     # Pr votes Format
     title = "# Proportional Votes\n"
-    header = "Party|Votes|\n:--:|:--:|\n"
+    header = "Party|Votes|Percentage|\n:--:|:--:|:--:|\n"
+    counted_votes = sum_total(data)
+    total_voters = 11_000_000
+    counted_percent = round((counted_votes / total_voters) * 100, 1)
+    metadata = f"**Votes counted**: {counted_votes:,} ~({counted_percent})%\n\n**Remaining Votes**: {(total_voters-counted_votes):,}\n\n"
     parties = []
-    for index, party_info in enumerate(data):
+
+    make_int = lambda x: int("".join(x.split(",")))
+    vote_percent = lambda x: round((make_int(x["votes"]) / counted_votes) * 100, 1)
+
+    for index, party_info in enumerate(data[:12]):
         parties.append(
-            f"{party_info['name']} | {party_info['votes']}"
+            f"{party_info['name']} | {party_info['votes']} | {vote_percent(party_info)}%"
         )
-    pr_info = title + header + "\n".join(parties)
+    pr_info = title + metadata + header + "\n".join(parties)
     return f"{pr_info}\n\n"
 
 
