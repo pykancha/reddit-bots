@@ -225,7 +225,7 @@ def gen_summary_msg(data):
 def gen_pr_msg(data):
     # Pr votes Format
     title = "# Proportional Votes\n"
-    header = "Party|Votes|Percentage|\n:--:|:--:|:--:|\n"
+    header = "Party|Votes|%(counted)|%(total)|\n:--:|:--:|:--:|:--:|\n"
     counted_votes = sum_total(data)
     total_voters = 11_000_000
     counted_percent = round((counted_votes / total_voters) * 100, 1)
@@ -234,10 +234,11 @@ def gen_pr_msg(data):
 
     make_int = lambda x: int("".join(x.split(",")))
     vote_percent = lambda x: round((make_int(x["votes"]) / counted_votes) * 100, 1)
+    vote_percent_total = lambda x: round((make_int(x["votes"]) / total_voters) * 100, 1)
 
     for index, party_info in enumerate(data[:12]):
         parties.append(
-            f"{party_info['name']} | {party_info['votes']} | {vote_percent(party_info)}%"
+            f"{party_info['name']} | {party_info['votes']} | {vote_percent(party_info)}% | {vote_percent_total(party_info)}%"
         )
     pr_info = title + metadata + header + "\n".join(parties)
     return f"{pr_info}\n\n"
