@@ -29,6 +29,7 @@ from parser import (
     morang_six_votes,
     party_shortform,
     rauthat_one_votes,
+    sunsari_one_votes,
     rauthat_two_votes,
     rupandehi_two_votes,
     westnawalparasi_one_votes,
@@ -59,6 +60,7 @@ FETCH_LIST = [
     "pradesh-5/district-rupandehi",
     "pradesh-5/district-gulmi",
     "pradesh-3/district-kavrepalanchowk",
+    "pradesh-1/district-sunsari",
 ]
 
 
@@ -84,6 +86,7 @@ def main():
 
     api_data = get_data(FETCH_LIST)
     election_area_map = {
+        "Sunsari 1": partial(sunsari_one_votes, api_data),
         "Gulmi 2": partial(gulmi_two_votes, api_data),
         "Rupandehi 2": partial(rupandehi_two_votes, api_data),
         "Kavre 2": partial(kavre_two_votes, api_data),
