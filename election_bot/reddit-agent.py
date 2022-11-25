@@ -14,6 +14,7 @@ from parser import (
     jhapa_four_votes,
     jhapa_three_votes,
     jhapa_two_votes,
+    gulmi_two_votes,
     kathmandu_eight_votes,
     kathmandu_five_votes,
     kathmandu_four_votes,
@@ -56,6 +57,7 @@ FETCH_LIST = [
     "pradesh-1/district-morang",
     "pradesh-2/district-mahottari",
     "pradesh-5/district-rupandehi",
+    "pradesh-5/district-gulmi",
     "pradesh-3/district-kavrepalanchowk",
 ]
 
@@ -82,10 +84,11 @@ def main():
 
     api_data = get_data(FETCH_LIST)
     election_area_map = {
-        "Chitwan 2": partial(chitwan_two_votes, api_data),
-        "Kathmandu 6": partial(kathmandu_six_votes, api_data),
+        "Gulmi 2": partial(gulmi_two_votes, api_data),
         "Rupandehi 2": partial(rupandehi_two_votes, api_data),
         "Kavre 2": partial(kavre_two_votes, api_data),
+        "Chitwan 2": partial(chitwan_two_votes, api_data),
+        "Kathmandu 6": partial(kathmandu_six_votes, api_data),
         "Rauthat 2": partial(rauthat_two_votes, api_data),
         "Lalitpur 3": partial(lalitpur_three_votes, api_data),
         "Jhapa 2": partial(jhapa_two_votes, api_data),
