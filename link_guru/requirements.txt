@@ -3,7 +3,7 @@ atomicwrites==1.4.0; python_version >= "3.5" and sys_platform == "win32"
 attrs==19.3.0
 beautifulsoup4==4.9.0
 bs4==0.0.1
-certifi==2020.4.5.1
+certifi==2022.12.7
 cfgv==3.1.0
 chardet==3.0.4
 click==7.1.2
